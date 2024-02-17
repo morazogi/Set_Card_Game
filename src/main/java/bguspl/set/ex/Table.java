@@ -7,11 +7,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.stream.Collectors;
 
 
-/**
- * This class contains the data that is visible to the player.
- *
- * @inv slotToCard[x] == y iff cardToSlot[y] == x
- */
 public class Table {
 
     /**
