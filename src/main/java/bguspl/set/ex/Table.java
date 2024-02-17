@@ -2,10 +2,10 @@ package bguspl.set.ex;
 
 import bguspl.set.Env;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.SynchronousQueue;
 import java.util.stream.Collectors;
+
 
 /**
  * This class contains the data that is visible to the player.
@@ -17,7 +17,7 @@ public class Table {
     /**
      * The game environment object.
      */
-    private final Env env;-
+    private final Env env;
 
     /**
      * Mapping between a slot and the card placed in it (null if none).
@@ -29,6 +29,8 @@ public class Table {
      */
     protected final Integer[] cardToSlot; // slot per card (if any)
 
+    private Queue<Integer> QPlayer1;
+    private Queue<Integer> QPlayer2;
     /**
      * Constructor for testing.
      *
@@ -41,6 +43,8 @@ public class Table {
         this.env = env;
         this.slotToCard = slotToCard;
         this.cardToSlot = cardToSlot;
+        this.QPlayer1 = new SynchronousQueue<>();
+        this.QPlayer2 = new SynchronousQueue<>();
     }
 
     /**
@@ -115,7 +119,12 @@ public class Table {
      * @param slot   - the slot on which to place the token.
      */
     public void placeToken(int player, int slot) {
-        // TODO implement
+        if (player == 1)
+            QPlayer1.add(slot);
+        else
+            QPlayer2.add(slot);
+        env.ui.placeToken(player,slot);
+        // +++ TODO implement
     }
 
     /**
@@ -125,7 +134,11 @@ public class Table {
      * @return       - true iff a token was successfully removed.
      */
     public boolean removeToken(int player, int slot) {
-        // TODO implement
-        return false;
+        if (player == 1)
+            return QPlayer1.remove(slot);
+        else
+            return QPlayer2.remove(slot);
+        // +++ TODO implement
+
     }
 }
