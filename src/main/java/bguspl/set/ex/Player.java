@@ -2,6 +2,9 @@ package bguspl.set.ex;
 
 import bguspl.set.Env;
 
+import java.util.Queue;
+import java.util.concurrent.SynchronousQueue;
+
 /**
  * This class manages the players' threads and data
  *
@@ -14,7 +17,6 @@ public class Player implements Runnable {
      * The game environment object.
      */
     private final Env env;
-
     /**
      * Game entities.
      */
@@ -49,6 +51,8 @@ public class Player implements Runnable {
      * The current score of the player.
      */
     private int score;
+    private int[] tokens;
+    private Queue<Integer> actions;
 
     /**
      * The class constructor.
@@ -78,9 +82,29 @@ public class Player implements Runnable {
         playerThread = Thread.currentThread();
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
         if (!human) createArtificialIntelligence();
-
         while (!terminate) {
-            // TODO implement main player loop
+            while(tokens[2]==-1) {
+                if (!actions.isEmpty())
+                    takeAction(actions.remove());
+                else
+                    while (actions.isEmpty()) {
+                        try {
+                            playerThread.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            }
+            try {
+                playerThread.notifyAll();
+                playerThread.wait();//TODO need to understand how to wait and to notifyall before the dealer do stuff
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            this.tokens=new int[3];
+            tokens[2]=-1;
+
+            // +++TODO implement main player loop
         }
         if (!human) try { aiThread.join(); } catch (InterruptedException ignored) {}
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
@@ -119,7 +143,11 @@ public class Player implements Runnable {
      * @param slot - the slot corresponding to the key pressed.
      */
     public void keyPressed(int slot) {
-        // TODO implement
+        if(actions.size()<3) {
+            actions.add(slot);
+            playerThread.notify();
+        }
+        // ++++TODO implement
     }
 
     public void takeAction(int slot) {
@@ -147,7 +175,9 @@ public class Player implements Runnable {
      * @post - the player's score is updated in the ui.
      */
     public void point() {
-        // TODO implement
+        score++;
+        env.ui.setScore(this.id,score);
+        // +++TODO implement
 
         int ignored = table.countCards(); // this part is just for demonstration in the unit tests
         env.ui.setScore(id, ++score);
@@ -157,7 +187,13 @@ public class Player implements Runnable {
      * Penalize a player and perform other related actions.
      */
     public void penalty() {
-        // TODO implement
+        try {
+            Thread.sleep(env.config.penaltyFreezeMillis);
+        } catch (InterruptedException e) {
+            env.logger.info("thread " + Thread.currentThread().getName() + " got an exception" +
+                    ", Player::penalty() is bugged.");
+        }
+        //+++ TODO implement
     }
 
     public int score() {
