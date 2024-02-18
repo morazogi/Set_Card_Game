@@ -64,6 +64,10 @@ public class Player implements Runnable {
         this.table = table;
         this.id = id;
         this.human = human;
+        this.score = 0;
+        this.actions = new SynchronousQueue<>();
+        this.tokens= new int[3];
+        tokens[2]=-1;
     }
 
     /**
@@ -105,7 +109,8 @@ public class Player implements Runnable {
      * Called when the game should be terminated.
      */
     public void terminate() {
-        // TODO implement
+        this.terminate = true;
+        // +++ TODO implement
     }
 
     /**
@@ -117,9 +122,27 @@ public class Player implements Runnable {
         // TODO implement
     }
 
+    public void takeAction(int slot) {
+
+        for ( int i= 0; i < tokens.length; i++) {
+            if(tokens[i] == slot) {
+                tokens[i] = -1;
+                table.removeToken(id, slot);
+                return ;
+            }
+        }
+        for(int i= 0; i < tokens.length; i++) {
+            if (tokens[i] == -1) {
+                tokens[i] = slot;
+                table.placeToken(id, slot);
+                return ;
+            }
+        }
+    }
+
     /**
-     * Award a point to a player and perform other related actions.
-     *
+
+     ** Award a point to a player and perform other related actions.
      * @post - the player's score is increased by 1.
      * @post - the player's score is updated in the ui.
      */

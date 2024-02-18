@@ -24,8 +24,6 @@ public class Table {
      */
     protected final Integer[] cardToSlot; // slot per card (if any)
 
-    private Queue<Integer> QPlayer1;
-    private Queue<Integer> QPlayer2;
     /**
      * Constructor for testing.
      *
@@ -38,8 +36,6 @@ public class Table {
         this.env = env;
         this.slotToCard = slotToCard;
         this.cardToSlot = cardToSlot;
-        this.QPlayer1 = new SynchronousQueue<>();
-        this.QPlayer2 = new SynchronousQueue<>();
     }
 
     /**
@@ -51,7 +47,6 @@ public class Table {
 
         this(env, new Integer[env.config.tableSize], new Integer[env.config.deckSize]);
     }
-
     /**
      * This method prints all possible legal sets of cards that are currently on the table.
      */
@@ -117,10 +112,10 @@ public class Table {
      * @param slot   - the slot on which to place the token.
      */
     public void placeToken(int player, int slot) {
-        if (player == 1)
-            QPlayer1.add(slot);
-        else
-            QPlayer2.add(slot);
+//        if (player == 1)
+//            QPlayer1.add(slot);
+//        else
+//            QPlayer2.add(slot);
         env.ui.placeToken(player,slot);
         // +++ TODO implement
     }
@@ -132,10 +127,12 @@ public class Table {
      * @return       - true iff a token was successfully removed.
      */
     public boolean removeToken(int player, int slot) {
-        if (player == 1)
-            return QPlayer1.remove(slot);
-        else
-            return QPlayer2.remove(slot);
+//        if (player == 1)
+//            return QPlayer1.remove(slot);
+//        else
+//            return QPlayer2.remove(slot);
+        env.ui.removeToken(player,slot);
+        return true;
         // +++ TODO implement
 
     }
