@@ -53,7 +53,7 @@ public class Player implements Runnable {
     private int score;
     private int[] tokens;
     private Queue<Integer> actions;
-
+    private Dealer dealer;
     /**
      * The class constructor.
      *
@@ -78,7 +78,7 @@ public class Player implements Runnable {
      * The main player thread of each player starts here (main loop for the player thread).
      */
     @Override
-    public void run() {
+    public void run() {//TODO remove the actions to only tokens
         playerThread = Thread.currentThread();
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
         if (!human) createArtificialIntelligence();
@@ -86,7 +86,7 @@ public class Player implements Runnable {
             while(tokens[2]==-1) {
                 if (!actions.isEmpty())
                     takeAction(actions.remove());
-                else
+                else {
                     while (actions.isEmpty()) {
                         try {
                             playerThread.wait();
@@ -94,17 +94,11 @@ public class Player implements Runnable {
                             throw new RuntimeException(e);
                         }
                     }
+                }
             }
-            try {
-                playerThread.notifyAll();
-                playerThread.wait();//TODO need to understand how to wait and to notifyall before the dealer do stuff
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            this.tokens=new int[3];
-            tokens[2]=-1;
+            
+            dealer.DealerThread.notify();
 
-            // +++TODO implement main player loop
         }
         if (!human) try { aiThread.join(); } catch (InterruptedException ignored) {}
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
@@ -119,7 +113,10 @@ public class Player implements Runnable {
         aiThread = new Thread(() -> {
             env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
             while (!terminate) {
-                // TODO implement player key press simulator
+                while(tokens.size() <3) {
+                    int rnd = (int) (Math.random() * ((double) env.config.tableSize));
+                    this.keyPressed(rnd);
+                }
                 try {
                     synchronized (this) { wait(); }
                 } catch (InterruptedException ignored) {}

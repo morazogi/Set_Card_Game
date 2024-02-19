@@ -37,11 +37,15 @@ public class Dealer implements Runnable {
      */
     private long reshuffleTime = Long.MAX_VALUE;
 
+    public Thread DealerThread;
+
+    private int clock;
     public Dealer(Env env, Table table, Player[] players) {
         this.env = env;
         this.table = table;
         this.players = players;
         deck = IntStream.range(0, env.config.deckSize).boxed().collect(Collectors.toList());
+        this.clock=60;
     }
 
     /**
@@ -49,6 +53,7 @@ public class Dealer implements Runnable {
      */
     @Override
     public void run() {
+        DealerThread = Thread.currentThread();
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
         while (!shouldFinish()) {
             placeCardsOnTable();
@@ -113,6 +118,15 @@ public class Dealer implements Runnable {
      * Reset and/or update the countdown and the countdown display.
      */
     private void updateTimerDisplay(boolean reset) {
+        if(reset){
+            clock=60;
+            env.ui.setCountdown(clock*1000,false);
+        }
+        else{
+            clock--;
+            env.ui.setCountdown(clock*1000,clock*1000<env.config.turnTimeoutWarningMillis);
+        }
+
         // TODO implement
     }
 
