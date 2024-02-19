@@ -1,6 +1,7 @@
 package bguspl.set.ex;
 
 import bguspl.set.Env;
+import bguspl.set.ThreadLogger;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,7 +112,12 @@ public class Dealer implements Runnable {
      * Sleep for a fixed amount of time or until the thread is awakened for some purpose.
      */
     private void sleepUntilWokenOrTimeout() {
-        // TODO implement
+        try {
+            this.DealerThread.wait();
+        }
+        catch (InterruptedException e){
+            env.logger.info("thread " + Thread.currentThread().getName() + " woken.");
+        }
     }
 
     /**
