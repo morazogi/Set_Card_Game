@@ -51,7 +51,7 @@ public class Player implements Runnable {
      * The current score of the player.
      */
     private int score;
-    private int[] tokens;
+    private Queue<Integer> tokens;
     private Queue<Integer> actions;
     private Dealer dealer;
     /**
@@ -70,8 +70,9 @@ public class Player implements Runnable {
         this.human = human;
         this.score = 0;
         this.actions = new SynchronousQueue<>();
-        this.tokens= new int[3];
-        tokens[2]=-1;
+        this.tokens= new SynchronousQueue<>();
+        this.dealer=dealer;
+
     }
 
     /**
@@ -83,7 +84,7 @@ public class Player implements Runnable {
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
         if (!human) createArtificialIntelligence();
         while (!terminate) {
-            while(tokens[2]==-1) {
+            while(tokens.size() <3) {
                 if (!actions.isEmpty())
                     takeAction(actions.remove());
                 else {
@@ -149,16 +150,16 @@ public class Player implements Runnable {
 
     public void takeAction(int slot) {
 
-        for ( int i= 0; i < tokens.length; i++) {
-            if(tokens[i] == slot) {
-                tokens[i] = -1;
+        for ( int i= 0; i < tokens.size(); i++) {
+            if(tokens.contains(slot)) {
+                tokens.remove(slot);
                 table.removeToken(id, slot);
                 return ;
             }
         }
-        for(int i= 0; i < tokens.length; i++) {
-            if (tokens[i] == -1) {
-                tokens[i] = slot;
+        for(int i= 0; i < tokens.size(); i++) {
+            if (tokens.contains(slot)) {
+                tokens.remove(slot);
                 table.placeToken(id, slot);
                 return ;
             }
