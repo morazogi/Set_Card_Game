@@ -3,7 +3,8 @@ package bguspl.set.ex;
 import bguspl.set.Env;
 import bguspl.set.ThreadLogger;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.SynchronousQueue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -26,8 +27,8 @@ public class Dealer implements Runnable {
     /**
      * The list of card ids that are left in the dealer's deck.
      */
-    private final List<Integer> deck;
-
+    private  List<Integer> deck;
+    private final List<Integer> default12 = Arrays.asList(0,1,2,3,4,5,6,7,8,9,10,11);
     /**
      * True iff game should be terminated.
      */
@@ -42,6 +43,8 @@ public class Dealer implements Runnable {
 
     private long clock=60000;
     private long nextTimeClocker;
+
+    private Queue<Integer> toCheck = new SynchronousQueue<>();
     public Dealer(Env env, Table table, Player[] players) {
         this.env = env;
         this.table = table;
@@ -66,6 +69,10 @@ public class Dealer implements Runnable {
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
     }
 
+    public void addCheck(int PlayerId){
+        toCheck.add(PlayerId);
+    }
+
     /**
      * The inner loop of the dealer thread that runs as long as the countdown did not time out.
      */
@@ -75,7 +82,6 @@ public class Dealer implements Runnable {
             sleepUntilWokenOrTimeout();
             updateTimerDisplay(false);
             removeCardsFromTable();
-            placeCardsOnTable();
         }
     }
 
@@ -98,9 +104,24 @@ public class Dealer implements Runnable {
     /**
      * Checks cards should be removed from the table and removes them.
      */
-    private void removeCardsFromTable() {
-        // TODO implement here with if we have a set do it. maybe do here the placeCardsOnTable and not from timerloop
-        //todo implement queue of who called dealer first and not notify only
+    private void removeCardsFromTable() throws InterruptedException {
+        while(!toCheck.isEmpty()) {
+            Queue<Integer> tokens = players[toCheck.peek()].cardsTokens();
+            if (isSet(tokens)) {//check for set
+                List<Integer> RemovedCards = new ArrayList<>();
+                while (!tokens.isEmpty()) {
+                    int card = tokens.remove();
+                    RemovedCards.add(table.cardToSlot[card]);
+                    table.removeCard(card);
+                    deck.remove(card);
+                }
+                placeCardsOnTable(RemovedCards);
+                players[toCheck.peek()].playerThread(env.config.pointFreezeMillis);
+                players[toCheck.remove()].playerThread.interrupt();
+            }
+
+        }
+
     }
 
     /**
@@ -150,5 +171,10 @@ public class Dealer implements Runnable {
      */
     private void announceWinners() {
         // TODO implement
+    }
+
+    private boolean isSet(Queue<Integer> tokens){
+        int[] cards= tokens.stream().mapToInt(i->i).toArray();
+        return env.util.testSet(cards);
     }
 }

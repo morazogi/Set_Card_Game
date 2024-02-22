@@ -102,6 +102,7 @@ public class Table {
         int card = slotToCard[slot];
         slotToCard[slot] = null;
         cardToSlot[card] = null;
+        env.ui.removeTokens(slot);
 
         // +++TODO implement
     }

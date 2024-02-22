@@ -2,6 +2,7 @@ package bguspl.set.ex;
 
 import bguspl.set.Env;
 
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.SynchronousQueue;
 
@@ -30,7 +31,7 @@ public class Player implements Runnable {
     /**
      * The thread representing the current player.
      */
-    private Thread playerThread;
+    public Thread playerThread;
 
     /**
      * The thread of the AI (computer) player (an additional thread used to generate key presses).
@@ -89,10 +90,15 @@ public class Player implements Runnable {
                     playerThread.wait();
                 } catch (InterruptedException ignored) {}
             }
+            dealer.addCheck(this.id);
+
             try {//dealer checking and we wait
                 dealer.DealerThread.notify();
                 playerThread.wait();
             }catch(InterruptedException ignored){}
+            //todo penelaize how (maybe check if points ++ or not then penelzie self)
+
+
         }
         if (!human) try { aiThread.join(); } catch (InterruptedException ignored) {}
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
@@ -139,6 +145,7 @@ public class Player implements Runnable {
             if(tokens.contains(slot)) {
                 tokens.remove(slot);
                 table.removeToken(id, slot);
+                playerThread.notify();
                 return ;
             }
         }
@@ -158,6 +165,8 @@ public class Player implements Runnable {
     public void point() {
         score++;
         env.ui.setScore(this.id,score);
+        playerThread.wait(env.config.pointFreezeMillis);
+
         int ignored = table.countCards(); // this part is just for demonstration in the unit tests
         env.ui.setScore(id, ++score);
     }
@@ -178,8 +187,7 @@ public class Player implements Runnable {
         return score;
     }
 
-    public boolean isSet(){
-        int[] cards = {tokens.remove(),tokens.remove(),tokens.remove()};
-        return env.util.testSet(cards);
-    }
+
+    public Queue<Integer> cardsTokens(){return tokens;}
+    public void resetTokens(){tokens = new SynchronousQueue<>();}
 }
