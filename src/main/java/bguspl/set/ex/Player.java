@@ -50,9 +50,8 @@ public class Player implements Runnable {
     /**
      * The current score of the player.
      */
-    private int score;
-    private Queue<Integer> tokens;
-    private Queue<Integer> actions;
+    private int score=0;
+    private Queue<Integer> tokens = new SynchronousQueue<>();;
     private Dealer dealer;
     /**
      * The class constructor.
@@ -68,38 +67,32 @@ public class Player implements Runnable {
         this.table = table;
         this.id = id;
         this.human = human;
-        this.score = 0;
-        this.actions = new SynchronousQueue<>();
-        this.tokens= new SynchronousQueue<>();
         this.dealer=dealer;
-
     }
 
     /**
      * The main player thread of each player starts here (main loop for the player thread).
      */
     @Override
-    public void run() {//TODO remove the actions to only tokens
+    public void run() {
         playerThread = Thread.currentThread();
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
         if (!human) createArtificialIntelligence();
         while (!terminate) {
-            while(tokens.size() <3) {
-                if (!actions.isEmpty())
-                    takeAction(actions.remove());
-                else {
-                    while (actions.isEmpty()) {
-                        try {
-                            playerThread.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
+            while(tokens.size()==3) {//in case of penalty for not a set
+                try {
+                    playerThread.wait();
+                } catch (InterruptedException ignore) {}
             }
-            
-            dealer.DealerThread.notify();
-
+            while(tokens.size() <3) {//the main loop that waits for 3 tokens
+                try {
+                    playerThread.wait();
+                } catch (InterruptedException ignored) {}
+            }
+            try {//dealer checking and we wait
+                dealer.DealerThread.notify();
+                playerThread.wait();
+            }catch(InterruptedException ignored){}
         }
         if (!human) try { aiThread.join(); } catch (InterruptedException ignored) {}
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
@@ -111,6 +104,7 @@ public class Player implements Runnable {
      */
     private void createArtificialIntelligence() {
         // note: this is a very, very smart AI (!)
+        //note : no
         aiThread = new Thread(() -> {
             env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
             while (!terminate) {
@@ -141,15 +135,6 @@ public class Player implements Runnable {
      * @param slot - the slot corresponding to the key pressed.
      */
     public void keyPressed(int slot) {
-        if(actions.size()<3) {
-            actions.add(slot);
-            playerThread.notify();
-        }
-        // ++++TODO implement
-    }
-
-    public void takeAction(int slot) {
-
         for ( int i= 0; i < tokens.size(); i++) {
             if(tokens.contains(slot)) {
                 tokens.remove(slot);
@@ -157,13 +142,11 @@ public class Player implements Runnable {
                 return ;
             }
         }
-        for(int i= 0; i < tokens.size(); i++) {
-            if (tokens.contains(slot)) {
-                tokens.remove(slot);
-                table.placeToken(id, slot);
-                return ;
-            }
+        if(tokens.size()<3) {
+            tokens.add(slot);
+            playerThread.notify();
         }
+        // ++++TODO implement
     }
 
     /**
@@ -175,8 +158,6 @@ public class Player implements Runnable {
     public void point() {
         score++;
         env.ui.setScore(this.id,score);
-        // +++TODO implement
-
         int ignored = table.countCards(); // this part is just for demonstration in the unit tests
         env.ui.setScore(id, ++score);
     }
@@ -191,10 +172,14 @@ public class Player implements Runnable {
             env.logger.info("thread " + Thread.currentThread().getName() + " got an exception" +
                     ", Player::penalty() is bugged.");
         }
-        //+++ TODO implement
     }
 
     public int score() {
         return score;
+    }
+
+    public boolean isSet(){
+        int[] cards = {tokens.remove(),tokens.remove(),tokens.remove()};
+        return env.util.testSet(cards);
     }
 }

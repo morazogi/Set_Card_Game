@@ -112,10 +112,6 @@ public class Table {
      * @param slot   - the slot on which to place the token.
      */
     public void placeToken(int player, int slot) {
-//        if (player == 1)
-//            QPlayer1.add(slot);
-//        else
-//            QPlayer2.add(slot);
         env.ui.placeToken(player,slot);
         // +++ TODO implement
     }
@@ -127,10 +123,6 @@ public class Table {
      * @return       - true iff a token was successfully removed.
      */
     public boolean removeToken(int player, int slot) {
-//        if (player == 1)
-//            return QPlayer1.remove(slot);
-//        else
-//            return QPlayer2.remove(slot);
         env.ui.removeToken(player,slot);
         return true;
         // +++ TODO implement

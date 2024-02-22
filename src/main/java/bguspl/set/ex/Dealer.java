@@ -40,13 +40,13 @@ public class Dealer implements Runnable {
 
     public Thread DealerThread;
 
-    private int clock;
+    private long clock=60000;
+    private long nextTimeClocker;
     public Dealer(Env env, Table table, Player[] players) {
         this.env = env;
         this.table = table;
         this.players = players;
         deck = IntStream.range(0, env.config.deckSize).boxed().collect(Collectors.toList());
-        this.clock=60;
     }
 
     /**
@@ -70,6 +70,7 @@ public class Dealer implements Runnable {
      * The inner loop of the dealer thread that runs as long as the countdown did not time out.
      */
     private void timerLoop() {
+        nextTimeClocker=System.currentTimeMillis();
         while (!terminate && System.currentTimeMillis() < reshuffleTime) {
             sleepUntilWokenOrTimeout();
             updateTimerDisplay(false);
@@ -98,7 +99,8 @@ public class Dealer implements Runnable {
      * Checks cards should be removed from the table and removes them.
      */
     private void removeCardsFromTable() {
-        // TODO implement
+        // TODO implement here with if we have a set do it. maybe do here the placeCardsOnTable and not from timerloop
+        //todo implement queue of who called dealer first and not notify only
     }
 
     /**
@@ -112,11 +114,12 @@ public class Dealer implements Runnable {
      * Sleep for a fixed amount of time or until the thread is awakened for some purpose.
      */
     private void sleepUntilWokenOrTimeout() {
-        try {
-            this.DealerThread.wait();
-        }
-        catch (InterruptedException e){
-            env.logger.info("thread " + Thread.currentThread().getName() + " woken.");
+        nextTimeClocker+=+1000;
+        long toUpdateTime= nextTimeClocker -System.currentTimeMillis();
+        if(toUpdateTime>0) {
+            try {
+                this.DealerThread.wait(toUpdateTime);
+            } catch (InterruptedException ignore) {}
         }
     }
 
@@ -124,16 +127,15 @@ public class Dealer implements Runnable {
      * Reset and/or update the countdown and the countdown display.
      */
     private void updateTimerDisplay(boolean reset) {
-        if(reset){
-            clock=60;
-            env.ui.setCountdown(clock*1000,false);
+        if(System.currentTimeMillis()>=nextTimeClocker) {
+            if (reset) {
+                clock = env.config.turnTimeoutMillis;
+                env.ui.setCountdown(clock, false);
+            } else {
+                clock-=1000;
+                env.ui.setCountdown(clock, clock < env.config.turnTimeoutWarningMillis);
+            }
         }
-        else{
-            clock--;
-            env.ui.setCountdown(clock*1000,clock*1000<env.config.turnTimeoutWarningMillis);
-        }
-
-        // TODO implement
     }
 
     /**
