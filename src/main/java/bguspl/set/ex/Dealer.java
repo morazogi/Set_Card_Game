@@ -128,8 +128,12 @@ public class Dealer implements Runnable {
     /**
      * Check if any cards can be removed from the deck and placed on the table.
      */
-    private void placeCardsOnTable() {
-        // TODO implement
+    private void placeCardsOnTable(List<Integer> toFill) {
+        Collections.shuffle(toFill);
+        Collections.shuffle(deck);
+        for (int i = 0; i < toFill.size(); i++) {
+            table.placeCard(deck.remove(0), toFill.remove(0));
+        }
     }
 
     /**
