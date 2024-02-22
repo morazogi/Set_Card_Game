@@ -60,7 +60,7 @@ public class Dealer implements Runnable {
         DealerThread = Thread.currentThread();
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
         while (!shouldFinish()) {
-            placeCardsOnTable();
+            placeCardsOnTable(default12);
             timerLoop();
             updateTimerDisplay(false);
             removeAllCardsFromTable();
@@ -103,6 +103,7 @@ public class Dealer implements Runnable {
 
     /**
      * Checks cards should be removed from the table and removes them.
+     * when we find a set we remove here
      */
     private void removeCardsFromTable() throws InterruptedException {
         while(!toCheck.isEmpty()) {
@@ -162,15 +163,40 @@ public class Dealer implements Runnable {
     /**
      * Returns all the cards from the table to the deck.
      */
-    private void removeAllCardsFromTable() {
-        // TODO implement
+    private void removeAllCardsFromTable() {  // for reshuffle
+        List<Integer> random = Arrays.asList(0,1,2,3,4,5,6,7,8,9,10,11);
+        Collections.shuffle(random);
+        players[0].resetTokens();
+        players[1].resetTokens();
+        for (int i = 0; i <= 11; i++) {
+            deck.add(table.slotToCard[random.get(0)]);
+            table.removeCard(random.remove(0));
+        }
+
+        // ------------------TODO implement
     }
 
     /**
      * Check who is/are the winner/s and displays them.
      */
     private void announceWinners() {
-        // TODO implement
+        int [] arr;
+        if (players[0].score()>players[1].score())          //player 1 win
+        {
+            arr = new int[1];
+            arr[0] = 1;
+        }
+        else if (players[0].score()<players[1].score()) {   // player 2 win
+            arr = new int[1];
+            arr[0] = 2;
+        }
+        else {                                              //it's a tie
+            arr = new int[2];
+            arr[0] = 1;
+            arr[1] = 2;
+        }
+        env.ui.announceWinner(arr);
+        //  ------- TODO implement
     }
 
     private boolean isSet(Queue<Integer> tokens){
