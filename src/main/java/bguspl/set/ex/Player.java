@@ -96,7 +96,7 @@ public class Player implements Runnable {
                 dealer.DealerThread.notify();
                 playerThread.wait();
             }catch(InterruptedException ignored){}
-            //todo penelaize how (maybe check if points ++ or not then penelzie self)
+            //todo penelaize how (maybe check if points ++ or not then penelzie self
 
 
         }
