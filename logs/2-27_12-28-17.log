@@ -1,0 +1,21 @@
+[12:28:17.083] [INFO   ] thread main starting.
+[12:28:17.096] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[12:28:17.108] [SEVERE ] configuration file was loaded from resources directory.
+[12:28:18.230] [INFO   ] thread dealer starting.
+[12:28:18.242] [INFO   ] thread dealer starting.
+[12:28:18.354] [SEVERE ] placing card 40 in slot 9
+[12:28:18.464] [SEVERE ] placing card 72 in slot 7
+[12:28:18.576] [SEVERE ] placing card 56 in slot 11
+[12:28:18.687] [SEVERE ] placing card 35 in slot 4
+[12:28:18.798] [SEVERE ] placing card 43 in slot 6
+[12:28:18.910] [SEVERE ] placing card 13 in slot 2
+[12:28:19.020] [SEVERE ] placing card 23 in slot 10
+[12:28:19.132] [SEVERE ] placing card 71 in slot 5
+[12:28:19.242] [SEVERE ] placing card 14 in slot 3
+[12:28:19.353] [SEVERE ] placing card 29 in slot 1
+[12:28:19.464] [SEVERE ] placing card 18 in slot 0
+[12:28:19.576] [SEVERE ] placing card 74 in slot 8
+[12:28:19.577] [INFO   ] thread dealer terminated.
+[12:28:24.588] [SEVERE ] thanks for playing... it was fun!
+[12:28:24.588] [INFO   ] thread main terminated.
+[12:28:24.589] [SEVERE ] disposing of user interface elements

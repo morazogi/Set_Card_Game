@@ -1,0 +1,37 @@
+[14:19:28.371] [INFO   ] thread main starting.
+[14:19:28.382] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[14:19:28.385] [SEVERE ] configuration file was loaded from resources directory.
+[14:19:29.131] [INFO   ] thread dealer starting.
+[14:19:29.137] [INFO   ] thread dealer starting.
+[14:19:29.137] [INFO   ] thread dealer starting.
+[14:19:29.138] [INFO   ] thread dealer starting.
+[14:19:29.141] [INFO   ] thread dealer starting.
+[14:19:29.142] [INFO   ] thread dealer starting.
+[14:19:29.252] [SEVERE ] placing card 76 in slot 7
+[14:19:29.363] [SEVERE ] placing card 39 in slot 8
+[14:19:29.475] [SEVERE ] placing card 29 in slot 9
+[14:19:29.585] [SEVERE ] placing card 44 in slot 1
+[14:19:29.697] [SEVERE ] placing card 20 in slot 11
+[14:19:29.807] [SEVERE ] placing card 64 in slot 10
+[14:19:29.917] [SEVERE ] placing card 35 in slot 2
+[14:19:30.028] [SEVERE ] placing card 47 in slot 0
+[14:19:30.139] [SEVERE ] placing card 80 in slot 6
+[14:19:30.251] [SEVERE ] placing card 68 in slot 3
+[14:19:30.362] [SEVERE ] placing card 3 in slot 5
+[14:19:30.471] [SEVERE ] placing card 36 in slot 4
+[14:19:31.183] [SEVERE ] key 81 was pressed by player 1
+[14:19:31.184] [SEVERE ] player 1 placing token on slot 0
+[14:19:31.224] [SEVERE ] key 87 was pressed by player 1
+[14:19:31.225] [SEVERE ] player 1 placing token on slot 1
+[14:19:31.472] [SEVERE ] updating countdown to 59000
+[14:19:31.495] [SEVERE ] key 69 was pressed by player 1
+[14:19:31.495] [SEVERE ] player 1 placing token on slot 2
+[14:19:31.498] [SEVERE ] setting player 1 freeze to 3000
+[14:19:32.471] [SEVERE ] updating countdown to 58000
+[14:19:33.471] [SEVERE ] updating countdown to 57000
+[14:19:34.473] [SEVERE ] updating countdown to 56000
+[14:19:35.471] [SEVERE ] updating countdown to 55000
+[14:19:36.486] [SEVERE ] updating countdown to 54000
+[14:19:37.471] [SEVERE ] updating countdown to 53000
+[14:19:38.472] [SEVERE ] updating countdown to 52000
+[14:19:39.472] [SEVERE ] updating countdown to 51000

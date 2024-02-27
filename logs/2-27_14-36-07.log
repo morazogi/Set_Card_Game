@@ -1,0 +1,76 @@
+[14:36:07.287] [INFO   ] thread main starting.
+[14:36:07.304] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[14:36:07.308] [SEVERE ] configuration file was loaded from resources directory.
+[14:36:08.266] [INFO   ] thread dealer starting.
+[14:36:08.280] [INFO   ] thread dealer starting.
+[14:36:08.280] [INFO   ] thread dealer starting.
+[14:36:08.281] [INFO   ] thread dealer starting.
+[14:36:08.295] [INFO   ] thread dealer starting.
+[14:36:08.296] [INFO   ] thread dealer starting.
+[14:36:08.397] [SEVERE ] placing card 1 in slot 6
+[14:36:08.508] [SEVERE ] placing card 77 in slot 10
+[14:36:08.618] [SEVERE ] placing card 44 in slot 1
+[14:36:08.729] [SEVERE ] placing card 6 in slot 0
+[14:36:08.840] [SEVERE ] placing card 49 in slot 11
+[14:36:08.952] [SEVERE ] placing card 8 in slot 7
+[14:36:09.063] [SEVERE ] placing card 14 in slot 2
+[14:36:09.174] [SEVERE ] placing card 15 in slot 8
+[14:36:09.285] [SEVERE ] placing card 3 in slot 9
+[14:36:09.395] [SEVERE ] placing card 37 in slot 4
+[14:36:09.506] [SEVERE ] placing card 51 in slot 5
+[14:36:09.617] [SEVERE ] placing card 21 in slot 3
+[14:36:10.628] [SEVERE ] updating countdown to 59000
+[14:36:10.731] [SEVERE ] key 81 was pressed by player 1
+[14:36:17.399] [SEVERE ] updating countdown to 58000
+[14:36:17.400] [SEVERE ] updating countdown to 57000
+[14:36:17.403] [SEVERE ] player 1 placing token on slot 0
+[14:36:17.403] [SEVERE ] updating countdown to 56000
+[14:36:19.169] [SEVERE ] updating countdown to 55000
+[14:36:19.172] [SEVERE ] updating countdown to 54000
+[14:36:19.174] [SEVERE ] updating countdown to 53000
+[14:36:19.174] [SEVERE ] updating countdown to 52000
+[14:36:19.179] [SEVERE ] updating countdown to 51000
+[14:36:19.206] [SEVERE ] key 87 was pressed by player 1
+[14:36:19.206] [SEVERE ] player 1 placing token on slot 1
+[14:36:19.207] [SEVERE ] key 69 was pressed by player 1
+[14:36:19.208] [SEVERE ] player 1 placing token on slot 2
+[14:36:19.211] [SEVERE ] setting player 1 freeze to 3000
+[14:36:19.617] [SEVERE ] setting player 1 freeze to 2000
+[14:36:19.618] [SEVERE ] updating countdown to 50000
+[14:36:20.618] [SEVERE ] setting player 1 freeze to 1000
+[14:36:20.618] [SEVERE ] updating countdown to 49000
+[14:36:21.618] [SEVERE ] setting player 1 freeze to 0
+[14:36:21.618] [SEVERE ] updating countdown to 48000
+[14:36:22.617] [SEVERE ] updating countdown to 47000
+[14:36:23.631] [SEVERE ] updating countdown to 46000
+[14:36:24.618] [SEVERE ] updating countdown to 45000
+[14:36:25.618] [SEVERE ] updating countdown to 44000
+[14:36:26.617] [SEVERE ] updating countdown to 43000
+[14:36:27.627] [SEVERE ] updating countdown to 42000
+[14:36:28.625] [SEVERE ] updating countdown to 41000
+[14:36:29.618] [SEVERE ] updating countdown to 40000
+[14:36:30.617] [SEVERE ] updating countdown to 39000
+[14:36:31.626] [SEVERE ] updating countdown to 38000
+[14:36:32.618] [SEVERE ] updating countdown to 37000
+[14:36:33.618] [SEVERE ] updating countdown to 36000
+[14:36:34.618] [SEVERE ] updating countdown to 35000
+[14:36:35.617] [SEVERE ] updating countdown to 34000
+[14:36:36.618] [SEVERE ] updating countdown to 33000
+[14:36:37.618] [SEVERE ] updating countdown to 32000
+[14:36:38.617] [SEVERE ] updating countdown to 31000
+[14:36:39.625] [SEVERE ] updating countdown to 30000
+[14:36:40.618] [SEVERE ] updating countdown to 29000
+[14:36:41.618] [SEVERE ] updating countdown to 28000
+[14:36:42.617] [SEVERE ] updating countdown to 27000
+[14:36:43.628] [SEVERE ] updating countdown to 26000
+[14:36:44.617] [SEVERE ] updating countdown to 25000
+[14:36:45.630] [SEVERE ] updating countdown to 24000
+[14:36:46.617] [SEVERE ] updating countdown to 23000
+[14:36:47.622] [SEVERE ] updating countdown to 22000
+[14:36:48.618] [SEVERE ] updating countdown to 21000
+[14:36:49.617] [SEVERE ] updating countdown to 20000
+[14:36:50.622] [SEVERE ] updating countdown to 19000
+[14:36:51.618] [SEVERE ] updating countdown to 18000
+[14:36:52.618] [SEVERE ] updating countdown to 17000
+[14:36:53.618] [SEVERE ] updating countdown to 16000
+[14:36:54.618] [SEVERE ] updating countdown to 15000

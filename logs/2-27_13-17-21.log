@@ -1,0 +1,35 @@
+[13:17:21.735] [INFO   ] thread main starting.
+[13:17:21.749] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[13:17:21.752] [SEVERE ] configuration file was loaded from resources directory.
+[13:17:22.580] [INFO   ] thread dealer starting.
+[13:17:22.600] [INFO   ] thread dealer starting.
+[13:17:22.740] [SEVERE ] placing card 38 in slot 2
+[13:17:22.852] [SEVERE ] placing card 17 in slot 10
+[13:17:22.963] [SEVERE ] placing card 7 in slot 0
+[13:17:23.074] [SEVERE ] placing card 70 in slot 9
+[13:17:23.186] [SEVERE ] placing card 45 in slot 7
+[13:17:23.298] [SEVERE ] placing card 28 in slot 4
+[13:17:23.410] [SEVERE ] placing card 71 in slot 6
+[13:17:23.520] [SEVERE ] placing card 69 in slot 1
+[13:17:23.631] [SEVERE ] placing card 15 in slot 5
+[13:17:23.743] [SEVERE ] placing card 57 in slot 3
+[13:17:23.854] [SEVERE ] placing card 49 in slot 8
+[13:17:23.966] [SEVERE ] placing card 72 in slot 11
+[13:17:24.967] [SEVERE ] updating countdown to 59000
+[13:17:25.967] [SEVERE ] updating countdown to 58000
+[13:17:26.972] [SEVERE ] updating countdown to 57000
+[13:17:27.324] [SEVERE ] key 81 was pressed by player 1
+[13:17:27.324] [SEVERE ] player 1 placing token on slot 0
+[13:17:27.324] [INFO   ] thread dealer terminated.
+[13:17:27.325] [SEVERE ] thanks for playing... it was fun!
+[13:17:27.325] [INFO   ] thread main terminated.
+[13:17:27.326] [SEVERE ] disposing of user interface elements
+[13:17:27.968] [SEVERE ] updating countdown to 56000
+[13:17:28.967] [SEVERE ] updating countdown to 55000
+[13:17:29.968] [SEVERE ] updating countdown to 54000
+[13:17:30.968] [SEVERE ] updating countdown to 53000
+[13:17:31.967] [SEVERE ] updating countdown to 52000
+[13:17:32.967] [SEVERE ] updating countdown to 51000
+[13:17:33.967] [SEVERE ] updating countdown to 50000
+[13:17:34.973] [SEVERE ] updating countdown to 49000
+[13:17:35.967] [SEVERE ] updating countdown to 48000

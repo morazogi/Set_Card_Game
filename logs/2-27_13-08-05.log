@@ -1,0 +1,53 @@
+[13:08:05.056] [INFO   ] thread main starting.
+[13:08:05.071] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[13:08:05.075] [SEVERE ] configuration file was loaded from resources directory.
+[13:08:05.990] [INFO   ] thread dealer starting.
+[13:08:06.003] [INFO   ] thread dealer starting.
+[13:08:06.125] [SEVERE ] placing card 15 in slot 8
+[13:08:06.235] [SEVERE ] placing card 79 in slot 9
+[13:08:06.346] [SEVERE ] placing card 8 in slot 1
+[13:08:06.458] [SEVERE ] placing card 39 in slot 2
+[13:08:06.568] [SEVERE ] placing card 62 in slot 7
+[13:08:06.680] [SEVERE ] placing card 42 in slot 5
+[13:08:06.792] [SEVERE ] placing card 37 in slot 0
+[13:08:06.904] [SEVERE ] placing card 21 in slot 11
+[13:08:07.017] [SEVERE ] placing card 27 in slot 3
+[13:08:07.129] [SEVERE ] placing card 17 in slot 6
+[13:08:07.240] [SEVERE ] placing card 26 in slot 4
+[13:08:07.352] [SEVERE ] placing card 80 in slot 10
+[13:08:08.362] [SEVERE ] updating countdown to 59000
+[13:08:09.353] [SEVERE ] updating countdown to 58000
+[13:08:09.377] [SEVERE ] key 81 was pressed by player 1
+[13:08:16.862] [SEVERE ] updating countdown to 57000
+[13:08:20.447] [SEVERE ] updating countdown to 56000
+[13:08:25.288] [SEVERE ] updating countdown to 55000
+[13:08:20.447] [INFO   ] thread dealer terminated.
+[13:08:25.295] [SEVERE ] thanks for playing... it was fun!
+[13:08:25.295] [SEVERE ] updating countdown to 54000
+[13:08:25.300] [INFO   ] thread main terminated.
+[13:08:25.303] [SEVERE ] updating countdown to 53000
+[13:08:25.304] [SEVERE ] disposing of user interface elements
+[13:08:25.305] [SEVERE ] updating countdown to 52000
+[13:08:25.306] [SEVERE ] updating countdown to 51000
+[13:08:25.309] [SEVERE ] updating countdown to 50000
+[13:08:25.312] [SEVERE ] updating countdown to 49000
+[13:08:25.317] [SEVERE ] updating countdown to 48000
+[13:08:25.319] [SEVERE ] updating countdown to 47000
+[13:08:25.320] [SEVERE ] updating countdown to 46000
+[13:08:25.321] [SEVERE ] updating countdown to 45000
+[13:08:25.321] [SEVERE ] updating countdown to 44000
+[13:08:25.322] [SEVERE ] updating countdown to 43000
+[13:08:25.363] [SEVERE ] updating countdown to 42000
+[13:08:26.353] [SEVERE ] updating countdown to 41000
+[13:08:27.353] [SEVERE ] updating countdown to 40000
+[13:08:28.353] [SEVERE ] updating countdown to 39000
+[13:08:29.353] [SEVERE ] updating countdown to 38000
+[13:08:30.352] [SEVERE ] updating countdown to 37000
+[13:08:31.353] [SEVERE ] updating countdown to 36000
+[13:08:32.352] [SEVERE ] updating countdown to 35000
+[13:08:33.352] [SEVERE ] updating countdown to 34000
+[13:08:34.352] [SEVERE ] updating countdown to 33000
+[13:08:35.352] [SEVERE ] updating countdown to 32000
+[13:08:36.352] [SEVERE ] updating countdown to 31000
+[13:08:37.352] [SEVERE ] updating countdown to 30000
+[13:08:38.352] [SEVERE ] updating countdown to 29000

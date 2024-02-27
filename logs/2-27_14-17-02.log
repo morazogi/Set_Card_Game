@@ -1,0 +1,35 @@
+[14:17:02.352] [INFO   ] thread main starting.
+[14:17:02.369] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[14:17:02.373] [SEVERE ] configuration file was loaded from resources directory.
+[14:17:03.349] [INFO   ] thread dealer starting.
+[14:17:03.351] [INFO   ] thread dealer starting.
+[14:17:03.352] [INFO   ] thread dealer starting.
+[14:17:03.353] [INFO   ] thread dealer starting.
+[14:17:03.433] [INFO   ] thread dealer starting.
+[14:17:03.446] [INFO   ] thread dealer starting.
+[14:17:03.512] [SEVERE ] placing card 28 in slot 6
+[14:17:03.621] [SEVERE ] placing card 36 in slot 5
+[14:17:03.733] [SEVERE ] placing card 47 in slot 8
+[14:17:03.843] [SEVERE ] placing card 56 in slot 2
+[14:17:03.953] [SEVERE ] placing card 78 in slot 10
+[14:17:04.065] [SEVERE ] placing card 0 in slot 0
+[14:17:04.258] [SEVERE ] placing card 57 in slot 9
+[14:17:04.397] [SEVERE ] placing card 16 in slot 1
+[14:17:04.521] [SEVERE ] placing card 2 in slot 4
+[14:17:04.632] [SEVERE ] placing card 79 in slot 11
+[14:17:04.742] [SEVERE ] placing card 26 in slot 3
+[14:17:04.852] [SEVERE ] placing card 17 in slot 7
+[14:17:05.852] [SEVERE ] updating countdown to 59000
+[14:17:06.269] [SEVERE ] key 81 was pressed by player 1
+[14:17:06.269] [SEVERE ] player 1 placing token on slot 0
+[14:17:06.639] [SEVERE ] key 87 was pressed by player 1
+[14:17:06.640] [SEVERE ] player 1 placing token on slot 1
+[14:17:06.852] [SEVERE ] updating countdown to 58000
+[14:17:06.909] [SEVERE ] key 69 was pressed by player 1
+[14:17:06.910] [SEVERE ] player 1 placing token on slot 2
+[14:17:23.825] [SEVERE ] updating countdown to 57000
+[14:17:25.756] [SEVERE ] updating countdown to 56000
+[14:17:27.572] [SEVERE ] updating countdown to 55000
+[14:17:28.576] [SEVERE ] updating countdown to 54000
+[14:18:09.409] [SEVERE ] updating countdown to 53000
+[14:18:09.413] [SEVERE ] updating countdown to 52000
