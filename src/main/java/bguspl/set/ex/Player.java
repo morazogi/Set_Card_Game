@@ -4,6 +4,8 @@ import bguspl.set.Env;
 
 import java.util.Arrays;
 import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 /**
@@ -52,7 +54,7 @@ public class Player implements Runnable {
      * The current score of the player.
      */
     private int score=0;
-    private Queue<Integer> tokens = new SynchronousQueue<>();;
+    private BlockingQueue<Integer> tokens = new ArrayBlockingQueue<>(3);
     private Dealer dealer;
     /**
      * The class constructor.
@@ -80,25 +82,33 @@ public class Player implements Runnable {
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
         if (!human) createArtificialIntelligence();
         while (!terminate) {
-            while(tokens.size()==3) {//in case of penalty for not a set
-                try {
-                    playerThread.wait();
-                } catch (InterruptedException ignore) {}
+            while (tokens.size() == 3) {//in case of penalty for not a set
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException ignore) {}
+                }
             }
-            while(tokens.size() <3) {//the main loop that waits for 3 tokens
-                try {
-                    playerThread.wait();
-                } catch (InterruptedException ignored) {}
+            while (tokens.size() < 3) {//the main loop that waits for 3 tokens
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException ignored) {}
+                }
             }
             dealer.addCheck(this.id);
-
-            try {//dealer checking and we wait
-                dealer.DealerThread.notify();
-                playerThread.wait();
-            }catch(InterruptedException ignored){}
-            //todo penelaize how (maybe check if points ++ or not then penelzie self
-
-
+            synchronized (this) {
+                try {//dealer checking and we wait
+                    dealer.DealerThread.interrupt();
+                    wait();
+                } catch (InterruptedException ignored) {}
+            }
+            synchronized (this) {
+                try {
+                    env.ui.setFreeze(id,milsToWait);
+                    wait(milsToWait);
+                } catch (InterruptedException ignored) {}
+            }
         }
         if (!human) try { aiThread.join(); } catch (InterruptedException ignored) {}
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
@@ -140,20 +150,20 @@ public class Player implements Runnable {
      *
      * @param slot - the slot corresponding to the key pressed.
      */
-    public void keyPressed(int slot) {
+    public synchronized void keyPressed(int slot) {
         for ( int i= 0; i < tokens.size(); i++) {
             if(tokens.contains(slot)) {
-                tokens.remove(slot);
-                table.removeToken(id, slot);
-                playerThread.notify();
-                return ;
+                    tokens.remove(slot);
+                    table.removeToken(id, slot);
+                    playerThread.interrupt();
+                    return;
             }
         }
-        if(tokens.size()<3) {
+        if(tokens.remainingCapacity()>0) {
             tokens.add(slot);
-            playerThread.notify();
+            table.placeToken(id, slot);
+            playerThread.interrupt();
         }
-        // ++++TODO implement
     }
 
     /**

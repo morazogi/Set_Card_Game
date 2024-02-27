@@ -4,6 +4,8 @@ import bguspl.set.Env;
 import bguspl.set.ThreadLogger;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -28,7 +30,7 @@ public class Dealer implements Runnable {
      * The list of card ids that are left in the dealer's deck.
      */
     private  List<Integer> deck;
-    private final List<Integer> default12 = Arrays.asList(0,1,2,3,4,5,6,7,8,9,10,11);
+    private List<Integer> default12 = new LinkedList<>();
     /**
      * True iff game should be terminated.
      */
@@ -41,15 +43,22 @@ public class Dealer implements Runnable {
 
     public Thread DealerThread;
 
-    private long clock=60000;
+    private long clock;
     private long nextTimeClocker;
+    private boolean ClockChanged=true;
 
-    private Queue<Integer> toCheck = new SynchronousQueue<>();
+    private final long sec =1000;
+
+    private BlockingQueue<Integer> toCheck ;
     public Dealer(Env env, Table table, Player[] players) {
         this.env = env;
         this.table = table;
         this.players = players;
         deck = IntStream.range(0, env.config.deckSize).boxed().collect(Collectors.toList());
+       toCheck = new ArrayBlockingQueue<>(players.length);
+       clock = env.config.turnTimeoutMillis;
+        for (int i = 0; i < env.config.rows*env.config.columns; i++)
+            default12.add(i);
     }
 
     /**
@@ -59,8 +68,9 @@ public class Dealer implements Runnable {
     public void run() {
         DealerThread = Thread.currentThread();
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
+        StartingPlayersThreads();
         while (!shouldFinish()) {
-            placeCardsOnTable(default12);
+            placeCardsOnTable(new LinkedList<>(default12));
             timerLoop();
             updateTimerDisplay(false);
             removeAllCardsFromTable();
@@ -73,15 +83,27 @@ public class Dealer implements Runnable {
         toCheck.add(PlayerId);
     }
 
+    private synchronized void StartingPlayersThreads(){
+        for(Player p:players){
+            ThreadLogger PlayerThread = new ThreadLogger(p, "" +p.id, env.logger);
+            PlayerThread.startWithLog();
+            p.playerThread=PlayerThread;
+        }
+    }
+
     /**
      * The inner loop of the dealer thread that runs as long as the countdown did not time out.
      */
     private void timerLoop() {
         nextTimeClocker=System.currentTimeMillis();
+        reshuffleTime=System.currentTimeMillis()+env.config.turnTimeoutMillis;
+        nextTimeClocker=System.currentTimeMillis()+sec;
         while (!terminate && System.currentTimeMillis() < reshuffleTime) {
             sleepUntilWokenOrTimeout();
             updateTimerDisplay(false);
-            removeCardsFromTable();
+            try {
+                removeCardsFromTable();
+            } catch (InterruptedException ignore) {}
         }
     }
 
@@ -98,7 +120,7 @@ public class Dealer implements Runnable {
      * @return true iff the game should be finished.
      */
     private boolean shouldFinish() {
-        return terminate || env.util.findSets(deck, 1).size() == 0;
+        return terminate || env.util.findSets(deck, 1).isEmpty();
     }
 
     /**
@@ -108,11 +130,15 @@ public class Dealer implements Runnable {
     private void removeCardsFromTable() throws InterruptedException {
         while(!toCheck.isEmpty()) {
             Queue<Integer> tokens = players[toCheck.peek()].cardsTokens();
+            int size=tokens.size();
+            for (int t=0 ; t<size;t++) {
+                tokens.add(table.slotToCard[tokens.remove()]);
+            }
             if (isSet(tokens)) {//check for set
-                List<Integer> RemovedCards = new ArrayList<>();
+                List<Integer> RemovedSlots = new ArrayList<>();
                 while (!tokens.isEmpty()) {
                     int card = tokens.remove();
-                    RemovedCards.add(table.cardToSlot[card]);
+                    RemovedSlots.add(table.cardToSlot[card]);
                     table.removeCard(card);
                     deck.remove(card);
                 }
@@ -131,7 +157,9 @@ public class Dealer implements Runnable {
     private void placeCardsOnTable(List<Integer> toFill) {
         Collections.shuffle(toFill);
         Collections.shuffle(deck);
-        for (int i = 0; i < toFill.size(); i++) {
+        int size = toFill.size();
+        int i;
+        for (i = 0; i < size; i++) {
             table.placeCard(deck.remove(0), toFill.remove(0));
         }
     }
@@ -140,12 +168,19 @@ public class Dealer implements Runnable {
      * Sleep for a fixed amount of time or until the thread is awakened for some purpose.
      */
     private void sleepUntilWokenOrTimeout() {
-        nextTimeClocker+=+1000;
-        long toUpdateTime= nextTimeClocker -System.currentTimeMillis();
+        if(System.currentTimeMillis()>=nextTimeClocker && !ClockChanged ) {
+            updateTimerDisplay(false);
+            nextTimeClocker += sec;;
+        }
+        ClockChanged=false;
+        long toUpdateTime= nextTimeClocker - System.currentTimeMillis();
         if(toUpdateTime>0) {
-            try {
-                this.DealerThread.wait(toUpdateTime);
-            } catch (InterruptedException ignore) {}
+            synchronized (this) {
+                try {
+                    wait(toUpdateTime);
+                } catch (InterruptedException ignore) {
+                }
+            }
         }
     }
 
@@ -153,13 +188,23 @@ public class Dealer implements Runnable {
      * Reset and/or update the countdown and the countdown display.
      */
     private void updateTimerDisplay(boolean reset) {
-        if(System.currentTimeMillis()>=nextTimeClocker) {
-            if (reset) {
-                clock = env.config.turnTimeoutMillis;
-                env.ui.setCountdown(clock, false);
-            } else {
-                clock-=1000;
+        for(Player p:players){
+            if(p.freeze>0) {
+                p.freeze -= sec;
+                env.ui.setFreeze(p.id, p.freeze);
+            }
+        }
+
+        if (reset) {
+            clock = env.config.turnTimeoutMillis;
+            env.ui.setCountdown(clock, false);
+            ClockChanged=true;
+        } else {
+            if(System.currentTimeMillis()>=nextTimeClocker) {
+                clock -= sec;
                 env.ui.setCountdown(clock, clock < env.config.turnTimeoutWarningMillis);
+                nextTimeClocker += sec;
+                ClockChanged=true;
             }
         }
     }
@@ -168,7 +213,9 @@ public class Dealer implements Runnable {
      * Returns all the cards from the table to the deck.
      */
     private void removeAllCardsFromTable() {  // for reshuffle
-        List<Integer> random = Arrays.asList(0,1,2,3,4,5,6,7,8,9,10,11);
+        List<Integer> random = new LinkedList<>();
+        for (int i = 0; i < env.config.columns*env.config.rows; i++)
+            random.add(i);
         Collections.shuffle(random);
         players[0].resetTokens();
         players[1].resetTokens();

@@ -80,15 +80,15 @@ public class Table {
      *
      * @post - the card placed is on the table, in the assigned slot.
      */
-    public void placeCard(int card, int slot) {
-        try {
-            Thread.sleep(env.config.tableDelayMillis);
-        } catch (InterruptedException ignored) {}
-
+    public  void placeCard(int card, int slot) {
+        synchronized (this){
+            try {
+                wait(env.config.tableDelayMillis);
+            } catch (InterruptedException ignored) {}
+        }
         cardToSlot[card] = slot;
         slotToCard[slot] = card;
         env.ui.placeCard(card,slot);
-        // +++++ TODO implement
     }
 
     /**
@@ -103,8 +103,7 @@ public class Table {
         slotToCard[slot] = null;
         cardToSlot[card] = null;
         env.ui.removeTokens(slot);
-
-        // +++TODO implement
+        env.ui.removeCard(slot);
     }
 
     /**
