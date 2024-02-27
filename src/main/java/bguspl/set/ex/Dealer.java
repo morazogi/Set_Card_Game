@@ -140,13 +140,14 @@ public class Dealer implements Runnable {
                     int card = tokens.remove();
                     RemovedSlots.add(table.cardToSlot[card]);
                     table.removeCard(card);
-                    deck.remove(card);
                 }
-                placeCardsOnTable(RemovedCards);
-                players[toCheck.peek()].playerThread(env.config.pointFreezeMillis);
-                players[toCheck.remove()].playerThread.interrupt();
+                placeCardsOnTable(RemovedSlots);
+                updateTimerDisplay(true);
+                players[toCheck.peek()].point();
             }
-
+            else
+                players[toCheck.peek()].penalty();
+            players[toCheck.remove()].playerThread.interrupt();
         }
 
     }
@@ -223,8 +224,8 @@ public class Dealer implements Runnable {
             deck.add(table.slotToCard[random.get(0)]);
             table.removeCard(random.remove(0));
         }
+        updateTimerDisplay(true);
 
-        // ------------------TODO implement
     }
 
     /**

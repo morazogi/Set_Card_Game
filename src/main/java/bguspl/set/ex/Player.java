@@ -56,6 +56,9 @@ public class Player implements Runnable {
     private int score=0;
     private BlockingQueue<Integer> tokens = new ArrayBlockingQueue<>(3);
     private Dealer dealer;
+    private long milsToWait=0;
+
+    public long freeze=0;
     /**
      * The class constructor.
      *
@@ -142,7 +145,6 @@ public class Player implements Runnable {
      */
     public void terminate() {
         this.terminate = true;
-        // +++ TODO implement
     }
 
     /**
@@ -175,8 +177,8 @@ public class Player implements Runnable {
     public void point() {
         score++;
         env.ui.setScore(this.id,score);
-        playerThread.wait(env.config.pointFreezeMillis);
-
+        milsToWait=env.config.pointFreezeMillis;
+        freeze=milsToWait;
         int ignored = table.countCards(); // this part is just for demonstration in the unit tests
         env.ui.setScore(id, ++score);
     }
@@ -185,12 +187,8 @@ public class Player implements Runnable {
      * Penalize a player and perform other related actions.
      */
     public void penalty() {
-        try {
-            Thread.sleep(env.config.penaltyFreezeMillis);
-        } catch (InterruptedException e) {
-            env.logger.info("thread " + Thread.currentThread().getName() + " got an exception" +
-                    ", Player::penalty() is bugged.");
-        }
+        milsToWait=env.config.penaltyFreezeMillis;
+        freeze=milsToWait;
     }
 
     public int score() {
