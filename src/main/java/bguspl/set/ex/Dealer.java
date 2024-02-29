@@ -71,6 +71,8 @@ public class Dealer implements Runnable {
         while (!shouldFinish()) {
             placeCardsOnTable(new LinkedList<>(default12));
             timerLoop();
+//            if (shouldFinish())
+//                break;
             removeAllCardsFromTable();
         }
         announceWinners();
@@ -160,10 +162,12 @@ public class Dealer implements Runnable {
     private void placeCardsOnTable(List<Integer> toFill) {
         //Collections.shuffle(toFill);
         //Collections.shuffle(deck);
-        int size = toFill.size();
-        int i;
-        for (i = 0; i < size; i++) {
+        if (!deck.isEmpty()){
+            int size = toFill.size();
+            int i;
+            for (i = 0; i < size; i++) {
             table.placeCard(deck.remove(0), toFill.remove(0));
+            }
         }
     }
 
@@ -225,18 +229,19 @@ public class Dealer implements Runnable {
      * Returns all the cards from the table to the deck.
      */
     private void removeAllCardsFromTable() {  // for reshuffle
-        List<Integer> random = new LinkedList<>();
-        for (int i = 0; i < env.config.columns*env.config.rows; i++)
-            random.add(i);
-        Collections.shuffle(random);
-        players[0].resetTokens();
-        players[1].resetTokens();
-        for (int i = 0; i <= 11; i++) {
-            deck.add(table.slotToCard[random.get(0)]);
-            table.removeCard(random.remove(0));
+        if (!shouldFinish()) {
+            List<Integer> random = new LinkedList<>();
+            for (int i = 0; i < env.config.columns * env.config.rows; i++)
+                random.add(i);
+            Collections.shuffle(random);
+            players[0].resetTokens();
+            players[1].resetTokens();
+            for (int i = 0; i <= 11; i++) {
+                deck.add(table.slotToCard[random.get(0)]);
+                table.removeCard(random.remove(0));
+            }
+            updateTimerDisplay(true);
         }
-        updateTimerDisplay(true);
-
     }
 
     /**
@@ -247,16 +252,16 @@ public class Dealer implements Runnable {
         if (players[0].score()>players[1].score())          //player 1 win
         {
             arr = new int[1];
-            arr[0] = 1;
+            arr[0] = 0;
         }
         else if (players[0].score()<players[1].score()) {   // player 2 win
             arr = new int[1];
-            arr[0] = 2;
+            arr[0] = 1;
         }
         else {                                              //it's a tie
             arr = new int[2];
-            arr[0] = 1;
-            arr[1] = 2;
+            arr[0] = 0;
+            arr[1] = 1;
         }
         env.ui.announceWinner(arr);
         //  ------- TODO implement

@@ -154,23 +154,25 @@ public class Player implements Runnable {
      * @param slot - the slot corresponding to the key pressed.
      */
     public void keyPressed(int slot) {
-        if(milsToWait==-1) {
-            for (int i = 0; i < tokens.size(); i++) {
-                if (tokens.contains(slot)) {
-                    tokens.remove(slot);
-                    table.removeToken(id, slot);
+        if (table.slotToCard[slot] != null) {
+            if (milsToWait == -1) {
+                for (int i = 0; i < tokens.size(); i++) {
+                    if (tokens.contains(slot)) {
+                        tokens.remove(slot);
+                        table.removeToken(id, slot);
+                        synchronized (this) {
+                            playerThread.interrupt();
+                        }
+                        return;
+                    }
+                }
+                if (tokens.remainingCapacity() > 0) {
+                    tokens.add(slot);
+                    table.placeToken(id, slot);
+
                     synchronized (this) {
                         playerThread.interrupt();
                     }
-                    return;
-                }
-            }
-            if (tokens.remainingCapacity() > 0) {
-                tokens.add(slot);
-                table.placeToken(id, slot);
-
-                synchronized (this) {
-                    playerThread.interrupt();
                 }
             }
         }
