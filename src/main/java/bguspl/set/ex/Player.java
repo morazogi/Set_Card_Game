@@ -54,9 +54,8 @@ public class Player implements Runnable {
     private int score=0;
     private BlockingQueue<Integer> tokens = new ArrayBlockingQueue<>(3);
     private Dealer dealer;
-    private long milsToWait=0;
-    public long NextFreezeUpdate = 0;
-    public long freezeLeft =-1000;
+    public long milsToWait=0;
+    public long nextFreezeTimeUpdate =0;
     /**
      * The class constructor.
      *
@@ -85,6 +84,7 @@ public class Player implements Runnable {
         while (!terminate) {
             synchronized (this) {
                 while (tokens.size() == 3) {//in case of penalty for not a set
+                    milsToWait=-1;
                     try {
                         wait();
                     } catch (InterruptedException ignore) {}
@@ -92,24 +92,31 @@ public class Player implements Runnable {
             }
             synchronized (this) {
                 while (tokens.size() < 3) {//loop that waits for 3 tokens
+                    milsToWait=-1;
                     try {
                         wait();
                     } catch (InterruptedException ignored) {}
                 }
             }
-            freezeLeft=1;
             dealer.addCheck(this.id);
             synchronized (this) {
                 try {//dealer checking and we wait
-                    notifyAll();
-                    while(freezeLeft ==1)
-                        wait();
+                    synchronized (this) {
+                        dealer.DealerThread.interrupt();
+                    }
+                    wait();
                 } catch (InterruptedException ignored) {}
             }
             synchronized (this) {
                 try {
-                    env.ui.setFreeze(id,milsToWait);
-                    wait(milsToWait);
+                    synchronized (this) {
+                        if (milsToWait > 0)
+                            Thread.sleep(milsToWait);
+                    }
+                    synchronized (this) {
+                        while(nextFreezeTimeUpdate!=0)
+                            wait();
+                    }
                 } catch (InterruptedException ignored) {}
             }
         }
@@ -153,29 +160,28 @@ public class Player implements Runnable {
      * @param slot - the slot corresponding to the key pressed.
      */
     public void keyPressed(int slot) {
-        if(freezeLeft <=0) {
+        if(milsToWait==-1) {
             for (int i = 0; i < tokens.size(); i++) {
                 if (tokens.contains(slot)) {
                     tokens.remove(slot);
                     table.removeToken(id, slot);
                     synchronized (this) {
-                        notifyAll();
+                        playerThread.interrupt();
                     }
                     return;
                 }
             }
             if (tokens.remainingCapacity() > 0) {
-                if(tokens.remainingCapacity() == 1)
-                    freezeLeft=1;
                 tokens.add(slot);
                 table.placeToken(id, slot);
 
                 synchronized (this) {
-                    notifyAll();
+                    playerThread.interrupt();
                 }
             }
         }
     }
+
 
     /**
 
@@ -185,7 +191,6 @@ public class Player implements Runnable {
      */
     public void point() {
         milsToWait=env.config.pointFreezeMillis;
-        freezeLeft =milsToWait;
         int ignored = table.countCards(); // this part is just for demonstration in the unit tests
         env.ui.setScore(id, ++score);
     }
@@ -194,7 +199,6 @@ public class Player implements Runnable {
      */
     public void penalty() {
         milsToWait=env.config.penaltyFreezeMillis;
-        freezeLeft =milsToWait;
     }
 
     public int score() {

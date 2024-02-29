@@ -126,14 +126,12 @@ public class Dealer implements Runnable {
         while(!toCheck.isEmpty()) {
             Player p = players[toCheck.remove()];
             Queue<Integer> tokens = p.cardsTokens();
-
             Queue<Integer> checkCards = new LinkedList<>();
             List<Integer> checkSlots = new LinkedList<>();
             int size=tokens.size();
             for (Integer token : tokens) {
                     int card = table.slotToCard[token];
                     checkSlots.add(token);
-                    tokens.add(token);
                     checkCards.add(card);
             }
             if (isSet(checkCards)) {//check for set
@@ -148,10 +146,10 @@ public class Dealer implements Runnable {
             }
             else
                 p.penalty();
-            p.NextFreezeUpdate=System.currentTimeMillis();
-            env.ui.setFreeze(p.id, p.freezeLeft);
+            env.ui.setFreeze(p.id, p.milsToWait);
+            p.nextFreezeTimeUpdate =System.currentTimeMillis()+sec;
             synchronized (this) {
-                notifyAll();
+                p.playerThread.interrupt();
             }
         }
     }
@@ -191,11 +189,19 @@ public class Dealer implements Runnable {
      * Reset and/or update the countdown and the countdown display.
      */
     private void updateTimerDisplay(boolean reset) {
+            long updateTime;
+            if(clock <= env.config.turnTimeoutWarningMillis)
+                updateTime=sec/100;//10 mili sec if warning
+            else
+                updateTime = sec;
+
         for(Player p:players){
-            if(p.freezeLeft >=0 && p.NextFreezeUpdate<=System.currentTimeMillis()) {
-                p.freezeLeft -= sec;
-                env.ui.setFreeze(p.id, p.freezeLeft);
-                p.NextFreezeUpdate+=sec;
+            if(p.milsToWait >0 && System.currentTimeMillis()>=p.nextFreezeTimeUpdate) {
+                p.nextFreezeTimeUpdate +=sec;
+                p.milsToWait -= updateTime;
+                env.ui.setFreeze(p.id, p.milsToWait);
+                if(p.milsToWait==0)
+                    p.playerThread.interrupt();
             }
         }
 
@@ -205,17 +211,13 @@ public class Dealer implements Runnable {
             ClockChanged=true;
             reshuffleTime=System.currentTimeMillis()+env.config.turnTimeoutMillis+sec;
         } else {
-            if(System.currentTimeMillis()>=nextTimeClocker) {
-                long updateTime;
-                if(clock <= env.config.turnTimeoutWarningMillis)
-                    updateTime=sec/100;//10 mili sec if warning
-                else
-                    updateTime = sec;
-                clock-=updateTime;
-                env.ui.setCountdown(clock, clock <= env.config.turnTimeoutWarningMillis);
-                nextTimeClocker += updateTime;
-                ClockChanged=true;
-            }
+                if(System.currentTimeMillis()>=nextTimeClocker) {
+                    clock -= updateTime;
+                    if (clock >= 0)
+                        env.ui.setCountdown(clock, clock < env.config.turnTimeoutWarningMillis);
+                    nextTimeClocker += updateTime;
+                    ClockChanged = true;
+                }
         }
     }
 
