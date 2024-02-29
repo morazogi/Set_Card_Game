@@ -147,9 +147,9 @@ public class Dealer implements Runnable {
             else
                 p.penalty();
             env.ui.setFreeze(p.id, p.milsToWait);
-            p.nextFreezeTimeUpdate =System.currentTimeMillis()+sec;
+            p.nextFreezeTimeUpdate =System.currentTimeMillis();
             synchronized (this) {
-                p.playerThread.interrupt();
+                notifyAll();
             }
         }
     }
@@ -158,8 +158,8 @@ public class Dealer implements Runnable {
      * Check if any cards can be removed from the deck and placed on the table.
      */
     private void placeCardsOnTable(List<Integer> toFill) {
-        Collections.shuffle(toFill);
-        Collections.shuffle(deck);
+        //Collections.shuffle(toFill);
+        //Collections.shuffle(deck);
         int size = toFill.size();
         int i;
         for (i = 0; i < size; i++) {
@@ -177,7 +177,7 @@ public class Dealer implements Runnable {
         ClockChanged=false;
         long toUpdateTime= nextTimeClocker - System.currentTimeMillis();
         synchronized (this) {
-            if(toUpdateTime>0) {
+            if(toUpdateTime>0 && toCheck.isEmpty()) {
                 try {
                     wait(toUpdateTime);
                 } catch (InterruptedException ignore) {}

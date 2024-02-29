@@ -98,27 +98,21 @@ public class Player implements Runnable {
                     } catch (InterruptedException ignored) {}
                 }
             }
+            milsToWait=0;
             dealer.addCheck(this.id);
-            synchronized (this) {
                 try {//dealer checking and we wait
                     synchronized (this) {
-                        dealer.DealerThread.interrupt();
-                    }
-                    wait();
-                } catch (InterruptedException ignored) {}
-            }
-            synchronized (this) {
-                try {
+                    notifyAll();
+                    while (milsToWait ==0)
+                        wait();
+                }
                     synchronized (this) {
                         if (milsToWait > 0)
                             Thread.sleep(milsToWait);
-                    }
-                    synchronized (this) {
-                        while(nextFreezeTimeUpdate!=0)
+                        while (true)
                             wait();
                     }
                 } catch (InterruptedException ignored) {}
-            }
         }
         if (!human) try { aiThread.join(); } catch (InterruptedException ignored) {}
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
@@ -205,10 +199,12 @@ public class Player implements Runnable {
         return score;
     }
 
-
     public Queue<Integer> cardsTokens(){return tokens;}
     public void resetTokens(){
-        while (!tokens.isEmpty())
-            keyPressed(tokens.peek());
+        while (!tokens.isEmpty()){
+            int slot = tokens.remove();
+            tokens.remove(slot);
+            table.removeToken(id, slot);
+        }
     }
 }
