@@ -1,0 +1,40 @@
+[11:27:41.044] [INFO   ] thread main starting.
+[11:27:41.063] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[11:27:41.084] [SEVERE ] configuration file was loaded from resources directory.
+[11:27:43.662] [INFO   ] thread dealer starting.
+[11:27:43.664] [INFO   ] thread dealer starting.
+[11:27:43.668] [INFO   ] thread 0 starting.
+[11:27:43.672] [INFO   ] thread 1 starting.
+[11:27:43.675] [INFO   ] thread 0 starting.
+[11:27:43.676] [INFO   ] thread 1 starting.
+[11:27:43.804] [SEVERE ] placing card 46 in slot 0
+[11:27:43.910] [SEVERE ] placing card 22 in slot 3
+[11:27:44.020] [SEVERE ] placing card 42 in slot 7
+[11:27:44.132] [SEVERE ] placing card 49 in slot 8
+[11:27:44.243] [SEVERE ] placing card 9 in slot 5
+[11:27:44.359] [SEVERE ] placing card 78 in slot 4
+[11:27:44.469] [SEVERE ] placing card 23 in slot 9
+[11:27:44.574] [SEVERE ] placing card 69 in slot 10
+[11:27:44.685] [SEVERE ] placing card 35 in slot 2
+[11:27:44.794] [SEVERE ] placing card 34 in slot 11
+[11:27:44.906] [SEVERE ] placing card 58 in slot 1
+[11:27:45.024] [SEVERE ] placing card 73 in slot 6
+[11:27:46.039] [SEVERE ] updating countdown to 59000
+[11:27:47.028] [SEVERE ] updating countdown to 58000
+[11:27:48.028] [SEVERE ] updating countdown to 57000
+[11:27:49.027] [SEVERE ] updating countdown to 56000
+[11:27:50.027] [SEVERE ] updating countdown to 55000
+[11:27:50.139] [SEVERE ] exit button pressed
+[11:27:51.032] [SEVERE ] updating countdown to 54000
+[11:27:51.142] [SEVERE ] removing tokens from slot 7
+[11:27:51.142] [SEVERE ] removing card from slot 7
+[11:27:51.251] [SEVERE ] removing tokens from slot 4
+[11:27:51.253] [SEVERE ] removing card from slot 4
+[11:27:51.363] [SEVERE ] removing tokens from slot 9
+[11:27:51.363] [SEVERE ] removing card from slot 9
+[11:27:51.474] [SEVERE ] removing tokens from slot 6
+[11:27:51.474] [SEVERE ] removing card from slot 6
+[11:27:51.585] [SEVERE ] removing tokens from slot 2
+[11:27:51.585] [SEVERE ] removing card from slot 2
+[11:27:51.699] [SEVERE ] removing tokens from slot 1
+[11:27:51.701] [SEVERE ] removing card from slot 1

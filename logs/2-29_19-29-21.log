@@ -1,0 +1,10 @@
+[19:29:21.883] [INFO   ] thread main starting.
+[19:29:23.087] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[19:29:23.111] [SEVERE ] configuration file was loaded from resources directory.
+[19:29:27.442] [INFO   ] thread dealer starting.
+[19:29:27.444] [INFO   ] thread dealer starting.
+[19:29:27.445] [INFO   ] thread 0 starting.
+[19:29:27.448] [INFO   ] thread 1 starting.
+[19:29:51.732] [INFO   ] thread 1 starting.
+[19:29:51.734] [INFO   ] thread 0 starting.
+[19:29:51.822] [SEVERE ] placing card 0 in slot 0

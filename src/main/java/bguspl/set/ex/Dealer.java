@@ -97,7 +97,7 @@ public class Dealer implements Runnable {
         nextTimeClocker=System.currentTimeMillis();
         reshuffleTime=System.currentTimeMillis()+env.config.turnTimeoutMillis+sec;
         nextTimeClocker=System.currentTimeMillis()+sec;
-        while (!terminate && System.currentTimeMillis() < reshuffleTime) {
+        while (!shouldFinish() && System.currentTimeMillis() < reshuffleTime) {
             sleepUntilWokenOrTimeout();
             updateTimerDisplay(false);
             removeCardsFromTable();
@@ -117,7 +117,12 @@ public class Dealer implements Runnable {
      * @return true iff the game should be finished.
      */
     private boolean shouldFinish() {
-        return terminate || env.util.findSets(deck, 1).isEmpty();
+        List<Integer> unitedDeck = new LinkedList<>(deck);
+        for (int i=0;i<12;i++) {
+            if (table.slotToCard[i] !=null)
+                unitedDeck.add(table.slotToCard[i]);
+        }
+        return terminate || env.util.findSets(unitedDeck, 1).isEmpty();
     }
 
     /**
@@ -264,7 +269,6 @@ public class Dealer implements Runnable {
             arr[1] = 1;
         }
         env.ui.announceWinner(arr);
-        //  ------- TODO implement
     }
 
     private boolean isSet(Queue<Integer> tokens){
