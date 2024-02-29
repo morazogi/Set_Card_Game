@@ -1,0 +1,46 @@
+[16:34:37.401] [INFO   ] thread main starting.
+[16:34:37.412] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[16:34:37.416] [SEVERE ] configuration file was loaded from resources directory.
+[16:34:38.191] [INFO   ] thread dealer starting.
+[16:34:38.192] [INFO   ] thread dealer starting.
+[16:34:38.192] [INFO   ] thread 0 starting.
+[16:34:38.193] [INFO   ] thread 1 starting.
+[16:34:38.193] [INFO   ] thread 0 starting.
+[16:34:38.194] [INFO   ] thread 1 starting.
+[16:34:38.311] [SEVERE ] placing card 62 in slot 5
+[16:34:38.421] [SEVERE ] placing card 7 in slot 11
+[16:34:38.530] [SEVERE ] placing card 34 in slot 2
+[16:34:38.639] [SEVERE ] placing card 38 in slot 7
+[16:34:38.751] [SEVERE ] placing card 67 in slot 4
+[16:34:38.861] [SEVERE ] placing card 24 in slot 8
+[16:34:38.969] [SEVERE ] placing card 22 in slot 3
+[16:34:39.077] [SEVERE ] placing card 35 in slot 1
+[16:34:39.186] [SEVERE ] placing card 8 in slot 6
+[16:34:39.293] [SEVERE ] placing card 28 in slot 0
+[16:34:39.401] [SEVERE ] placing card 70 in slot 10
+[16:34:39.511] [SEVERE ] placing card 26 in slot 9
+[16:34:39.643] [SEVERE ] key 81 was pressed by player 1
+[16:34:39.644] [SEVERE ] player 1 placing token on slot 0
+[16:34:39.784] [SEVERE ] key 87 was pressed by player 1
+[16:34:39.785] [SEVERE ] player 1 placing token on slot 1
+[16:34:39.912] [SEVERE ] key 69 was pressed by player 1
+[16:34:39.914] [SEVERE ] player 1 placing token on slot 2
+[16:34:39.922] [SEVERE ] setting player 1 freeze to 3000
+[16:34:40.515] [SEVERE ] setting player 1 freeze to 2000
+[16:34:40.518] [SEVERE ] updating countdown to 59000
+[16:34:41.514] [SEVERE ] setting player 1 freeze to 1000
+[16:34:41.519] [SEVERE ] updating countdown to 58000
+[16:34:42.515] [SEVERE ] setting player 1 freeze to 0
+[16:34:42.520] [SEVERE ] updating countdown to 57000
+[16:34:43.514] [SEVERE ] updating countdown to 56000
+[16:34:44.514] [SEVERE ] updating countdown to 55000
+[16:34:45.515] [SEVERE ] updating countdown to 54000
+[16:34:45.928] [SEVERE ] key 81 was pressed by player 1
+[16:34:46.035] [SEVERE ] key 87 was pressed by player 1
+[16:34:46.152] [SEVERE ] key 69 was pressed by player 1
+[16:34:46.514] [SEVERE ] updating countdown to 53000
+[16:34:47.527] [SEVERE ] updating countdown to 52000
+[16:34:48.514] [SEVERE ] updating countdown to 51000
+[16:34:49.514] [SEVERE ] updating countdown to 50000
+[16:34:50.514] [SEVERE ] updating countdown to 49000
+[16:34:51.515] [SEVERE ] updating countdown to 48000

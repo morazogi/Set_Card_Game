@@ -2,11 +2,9 @@ package bguspl.set.ex;
 
 import bguspl.set.Env;
 
-import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 
 /**
  * This class manages the players' threads and data
@@ -57,8 +55,8 @@ public class Player implements Runnable {
     private BlockingQueue<Integer> tokens = new ArrayBlockingQueue<>(3);
     private Dealer dealer;
     private long milsToWait=0;
-
-    public long freeze=0;
+    public long NextFreezeUpdate = 0;
+    public long freezeLeft =-1000;
     /**
      * The class constructor.
      *
@@ -85,15 +83,15 @@ public class Player implements Runnable {
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
         if (!human) createArtificialIntelligence();
         while (!terminate) {
-            while (tokens.size() == 3) {//in case of penalty for not a set
-                synchronized (this) {
+            synchronized (this) {
+                while (tokens.size() == 3) {//in case of penalty for not a set
                     try {
                         wait();
                     } catch (InterruptedException ignore) {}
                 }
             }
-            while (tokens.size() < 3) {//the main loop that waits for 3 tokens
-                synchronized (this) {
+            synchronized (this) {
+                while (tokens.size() < 3) {//loop that waits for 3 tokens
                     try {
                         wait();
                     } catch (InterruptedException ignored) {}
@@ -102,8 +100,9 @@ public class Player implements Runnable {
             dealer.addCheck(this.id);
             synchronized (this) {
                 try {//dealer checking and we wait
-                    dealer.DealerThread.interrupt();
-                    wait();
+                    notifyAll();
+                    while(freezeLeft ==-1)
+                        wait();
                 } catch (InterruptedException ignored) {}
             }
             synchronized (this) {
@@ -152,19 +151,25 @@ public class Player implements Runnable {
      *
      * @param slot - the slot corresponding to the key pressed.
      */
-    public synchronized void keyPressed(int slot) {
-        for ( int i= 0; i < tokens.size(); i++) {
-            if(tokens.contains(slot)) {
+    public void keyPressed(int slot) {
+        if(freezeLeft <=0) {
+            for (int i = 0; i < tokens.size(); i++) {
+                if (tokens.contains(slot)) {
                     tokens.remove(slot);
                     table.removeToken(id, slot);
-                    playerThread.interrupt();
+                    synchronized (this) {
+                        notifyAll();
+                    }
                     return;
+                }
             }
-        }
-        if(tokens.remainingCapacity()>0) {
-            tokens.add(slot);
-            table.placeToken(id, slot);
-            playerThread.interrupt();
+            if (tokens.remainingCapacity() > 0) {
+                tokens.add(slot);
+                table.placeToken(id, slot);
+                synchronized (this) {
+                    notifyAll();
+                }
+            }
         }
     }
 
@@ -178,7 +183,7 @@ public class Player implements Runnable {
         score++;
         env.ui.setScore(this.id,score);
         milsToWait=env.config.pointFreezeMillis;
-        freeze=milsToWait;
+        freezeLeft =milsToWait;
         int ignored = table.countCards(); // this part is just for demonstration in the unit tests
         env.ui.setScore(id, ++score);
     }
@@ -188,7 +193,7 @@ public class Player implements Runnable {
      */
     public void penalty() {
         milsToWait=env.config.penaltyFreezeMillis;
-        freeze=milsToWait;
+        freezeLeft =milsToWait;
     }
 
     public int score() {
@@ -197,5 +202,8 @@ public class Player implements Runnable {
 
 
     public Queue<Integer> cardsTokens(){return tokens;}
-    public void resetTokens(){tokens = new SynchronousQueue<>();}
+    public void resetTokens(){
+        while (!tokens.isEmpty())
+            keyPressed(tokens.peek());
+    }
 }

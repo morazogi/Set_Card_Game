@@ -1,0 +1,38 @@
+[16:30:43.546] [INFO   ] thread main starting.
+[16:30:43.555] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[16:30:43.559] [SEVERE ] configuration file was loaded from resources directory.
+[16:30:44.216] [INFO   ] thread dealer starting.
+[16:30:44.217] [INFO   ] thread dealer starting.
+[16:30:44.218] [INFO   ] thread 0 starting.
+[16:30:44.219] [INFO   ] thread 1 starting.
+[16:30:44.219] [INFO   ] thread 0 starting.
+[16:30:44.219] [INFO   ] thread 1 starting.
+[16:30:44.325] [SEVERE ] placing card 30 in slot 3
+[16:30:44.435] [SEVERE ] placing card 3 in slot 9
+[16:30:44.545] [SEVERE ] placing card 62 in slot 5
+[16:30:44.657] [SEVERE ] placing card 23 in slot 2
+[16:30:44.767] [SEVERE ] placing card 14 in slot 7
+[16:30:44.876] [SEVERE ] placing card 8 in slot 8
+[16:30:44.986] [SEVERE ] placing card 12 in slot 1
+[16:30:45.095] [SEVERE ] placing card 5 in slot 10
+[16:30:45.204] [SEVERE ] placing card 74 in slot 4
+[16:30:45.313] [SEVERE ] placing card 36 in slot 11
+[16:30:45.423] [SEVERE ] placing card 37 in slot 6
+[16:30:45.526] [SEVERE ] key 81 was pressed by player 1
+[16:30:45.527] [SEVERE ] player 1 placing token on slot 0
+[16:30:45.532] [SEVERE ] placing card 70 in slot 0
+[16:30:45.732] [SEVERE ] key 87 was pressed by player 1
+[16:30:45.733] [SEVERE ] player 1 placing token on slot 1
+[16:30:45.848] [SEVERE ] key 69 was pressed by player 1
+[16:30:45.849] [SEVERE ] player 1 placing token on slot 2
+[16:30:45.856] [INFO   ] thread dealer terminated.
+[16:30:46.892] [SEVERE ] key 82 was pressed by player 1
+[16:30:47.456] [SEVERE ] key 65 was pressed by player 1
+[16:30:47.568] [SEVERE ] key 83 was pressed by player 1
+[16:30:47.700] [SEVERE ] key 68 was pressed by player 1
+[16:30:48.061] [SEVERE ] key 81 was pressed by player 1
+[16:30:48.147] [SEVERE ] key 87 was pressed by player 1
+[16:30:48.279] [SEVERE ] key 69 was pressed by player 1
+[16:30:50.864] [SEVERE ] thanks for playing... it was fun!
+[16:30:50.865] [INFO   ] thread main terminated.
+[16:30:50.866] [SEVERE ] disposing of user interface elements

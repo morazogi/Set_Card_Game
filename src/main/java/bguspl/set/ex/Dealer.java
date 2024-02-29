@@ -6,7 +6,6 @@ import bguspl.set.ThreadLogger;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -72,7 +71,6 @@ public class Dealer implements Runnable {
         while (!shouldFinish()) {
             placeCardsOnTable(new LinkedList<>(default12));
             timerLoop();
-            updateTimerDisplay(false);
             removeAllCardsFromTable();
         }
         announceWinners();
@@ -87,7 +85,6 @@ public class Dealer implements Runnable {
         for(Player p:players){
             ThreadLogger PlayerThread = new ThreadLogger(p, "" +p.id, env.logger);
             PlayerThread.startWithLog();
-            p.playerThread=PlayerThread;
         }
     }
 
@@ -96,14 +93,12 @@ public class Dealer implements Runnable {
      */
     private void timerLoop() {
         nextTimeClocker=System.currentTimeMillis();
-        reshuffleTime=System.currentTimeMillis()+env.config.turnTimeoutMillis;
+        reshuffleTime=System.currentTimeMillis()+env.config.turnTimeoutMillis+sec;
         nextTimeClocker=System.currentTimeMillis()+sec;
         while (!terminate && System.currentTimeMillis() < reshuffleTime) {
             sleepUntilWokenOrTimeout();
             updateTimerDisplay(false);
-            try {
-                removeCardsFromTable();
-            } catch (InterruptedException ignore) {}
+            removeCardsFromTable();
         }
     }
 
@@ -127,29 +122,37 @@ public class Dealer implements Runnable {
      * Checks cards should be removed from the table and removes them.
      * when we find a set we remove here
      */
-    private void removeCardsFromTable() throws InterruptedException {
+    private void removeCardsFromTable() {
         while(!toCheck.isEmpty()) {
-            Queue<Integer> tokens = players[toCheck.peek()].cardsTokens();
+            Player p = players[toCheck.remove()];
+            Queue<Integer> tokens = p.cardsTokens();
+            Queue<Integer> checkslots = new LinkedList<>();
             int size=tokens.size();
             for (int t=0 ; t<size;t++) {
-                tokens.add(table.slotToCard[tokens.remove()]);
+                int token = tokens.remove();
+                int card = table.slotToCard[token];
+                tokens.add(token);
+                checkslots.add(card);
             }
-            if (isSet(tokens)) {//check for set
+            if (isSet(checkslots)) {//check for set
                 List<Integer> RemovedSlots = new ArrayList<>();
-                while (!tokens.isEmpty()) {
-                    int card = tokens.remove();
+                while (!checkslots.isEmpty()) {
+                    int card = checkslots.remove();
                     RemovedSlots.add(table.cardToSlot[card]);
                     table.removeCard(card);
                 }
                 placeCardsOnTable(RemovedSlots);
                 updateTimerDisplay(true);
-                players[toCheck.peek()].point();
+                p.point();
             }
             else
-                players[toCheck.peek()].penalty();
-            players[toCheck.remove()].playerThread.interrupt();
+                p.penalty();
+            p.NextFreezeUpdate=System.currentTimeMillis();
+            env.ui.setFreeze(p.id, p.freezeLeft);
+            synchronized (this) {
+                notifyAll();
+            }
         }
-
     }
 
     /**
@@ -169,18 +172,16 @@ public class Dealer implements Runnable {
      * Sleep for a fixed amount of time or until the thread is awakened for some purpose.
      */
     private void sleepUntilWokenOrTimeout() {
-        if(System.currentTimeMillis()>=nextTimeClocker && !ClockChanged ) {
+        if(!ClockChanged ) {
             updateTimerDisplay(false);
-            nextTimeClocker += sec;;
         }
         ClockChanged=false;
         long toUpdateTime= nextTimeClocker - System.currentTimeMillis();
-        if(toUpdateTime>0) {
-            synchronized (this) {
+        synchronized (this) {
+            if(toUpdateTime>0) {
                 try {
                     wait(toUpdateTime);
-                } catch (InterruptedException ignore) {
-                }
+                } catch (InterruptedException ignore) {}
             }
         }
     }
@@ -190,9 +191,10 @@ public class Dealer implements Runnable {
      */
     private void updateTimerDisplay(boolean reset) {
         for(Player p:players){
-            if(p.freeze>0) {
-                p.freeze -= sec;
-                env.ui.setFreeze(p.id, p.freeze);
+            if(p.freezeLeft >=0 && p.NextFreezeUpdate<=System.currentTimeMillis()) {
+                p.freezeLeft -= sec;
+                env.ui.setFreeze(p.id, p.freezeLeft);
+                p.NextFreezeUpdate+=sec;
             }
         }
 
@@ -202,9 +204,14 @@ public class Dealer implements Runnable {
             ClockChanged=true;
         } else {
             if(System.currentTimeMillis()>=nextTimeClocker) {
-                clock -= sec;
-                env.ui.setCountdown(clock, clock < env.config.turnTimeoutWarningMillis);
-                nextTimeClocker += sec;
+                long updateTime;
+                if(clock <= env.config.turnTimeoutWarningMillis)
+                    updateTime=sec/100;//10 mili sec if warning
+                else
+                    updateTime = sec;
+                clock-=updateTime;
+                env.ui.setCountdown(clock, clock <= env.config.turnTimeoutWarningMillis);
+                nextTimeClocker += updateTime;
                 ClockChanged=true;
             }
         }
