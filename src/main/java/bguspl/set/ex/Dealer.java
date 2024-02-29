@@ -126,22 +126,26 @@ public class Dealer implements Runnable {
         while(!toCheck.isEmpty()) {
             Player p = players[toCheck.remove()];
             Queue<Integer> tokens = p.cardsTokens();
-            Queue<Integer> checkslots = new LinkedList<>();
+
+            Queue<Integer> checkCards = new LinkedList<>();
+            List<Integer> checkSlots = new LinkedList<>();
             int size=tokens.size();
             for (int t=0 ; t<size;t++) {
-                int token = tokens.remove();
-                int card = table.slotToCard[token];
-                tokens.add(token);
-                checkslots.add(card);
+                    int token = tokens.remove();
+                    int card = table.slotToCard[token];
+                    checkSlots.add(token);
+                    tokens.add(token);
+                    checkCards.add(card);
             }
-            if (isSet(checkslots)) {//check for set
-                List<Integer> RemovedSlots = new ArrayList<>();
-                while (!checkslots.isEmpty()) {
-                    int card = checkslots.remove();
-                    RemovedSlots.add(table.cardToSlot[card]);
-                    table.removeCard(card);
+            if (isSet(checkCards)) {//check for set
+                List<Integer> RemovedCards = new ArrayList<>();
+                while (!checkCards.isEmpty()) {
+                    int card = checkCards.remove();
+                    RemovedCards.add(card);
+                    table.removeCard(table.cardToSlot[card]);
                 }
-                placeCardsOnTable(RemovedSlots);
+                p.resetTokens();
+                placeCardsOnTable(checkSlots);
                 updateTimerDisplay(true);
                 p.point();
             }
@@ -202,6 +206,7 @@ public class Dealer implements Runnable {
             clock = env.config.turnTimeoutMillis;
             env.ui.setCountdown(clock, false);
             ClockChanged=true;
+            reshuffleTime=System.currentTimeMillis()+env.config.turnTimeoutMillis+sec;
         } else {
             if(System.currentTimeMillis()>=nextTimeClocker) {
                 long updateTime;

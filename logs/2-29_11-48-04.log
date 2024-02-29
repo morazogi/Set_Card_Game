@@ -1,0 +1,90 @@
+[11:48:04.876] [INFO   ] thread main starting.
+[11:48:04.884] [SEVERE ] cannot read configuration file config.properties trying from resources.
+[11:48:04.887] [SEVERE ] configuration file was loaded from resources directory.
+[11:48:05.643] [INFO   ] thread dealer starting.
+[11:48:05.644] [INFO   ] thread dealer starting.
+[11:48:05.645] [INFO   ] thread 0 starting.
+[11:48:05.645] [INFO   ] thread 1 starting.
+[11:48:05.646] [INFO   ] thread 0 starting.
+[11:48:05.646] [INFO   ] thread 1 starting.
+[11:48:05.755] [SEVERE ] placing card 30 in slot 10
+[11:48:05.857] [SEVERE ] placing card 7 in slot 3
+[11:48:05.966] [SEVERE ] placing card 48 in slot 11
+[11:48:06.067] [SEVERE ] placing card 8 in slot 5
+[11:48:06.167] [SEVERE ] placing card 54 in slot 7
+[11:48:06.269] [SEVERE ] placing card 50 in slot 2
+[11:48:06.370] [SEVERE ] placing card 29 in slot 9
+[11:48:06.471] [SEVERE ] placing card 4 in slot 6
+[11:48:06.574] [SEVERE ] placing card 47 in slot 8
+[11:48:06.675] [SEVERE ] placing card 19 in slot 1
+[11:48:06.776] [SEVERE ] placing card 64 in slot 4
+[11:48:06.878] [SEVERE ] placing card 36 in slot 0
+[11:48:07.879] [SEVERE ] updating countdown to 59000
+[11:48:08.879] [SEVERE ] updating countdown to 58000
+[11:48:09.878] [SEVERE ] updating countdown to 57000
+[11:48:10.878] [SEVERE ] updating countdown to 56000
+[11:48:11.878] [SEVERE ] updating countdown to 55000
+[11:48:12.879] [SEVERE ] updating countdown to 54000
+[11:48:13.878] [SEVERE ] updating countdown to 53000
+[11:48:14.880] [SEVERE ] updating countdown to 52000
+[11:48:15.879] [SEVERE ] updating countdown to 51000
+[11:48:16.879] [SEVERE ] updating countdown to 50000
+[11:48:17.879] [SEVERE ] updating countdown to 49000
+[11:48:18.878] [SEVERE ] updating countdown to 48000
+[11:48:19.878] [SEVERE ] updating countdown to 47000
+[11:48:20.610] [SEVERE ] key 83 was pressed by player 1
+[11:48:20.610] [SEVERE ] player 1 placing token on slot 5
+[11:48:20.878] [SEVERE ] updating countdown to 46000
+[11:48:21.878] [SEVERE ] updating countdown to 45000
+[11:48:22.878] [SEVERE ] updating countdown to 44000
+[11:48:23.880] [SEVERE ] updating countdown to 43000
+[11:48:24.222] [SEVERE ] key 67 was pressed by player 1
+[11:48:24.222] [SEVERE ] player 1 placing token on slot 10
+[11:48:24.878] [SEVERE ] updating countdown to 42000
+[11:48:25.879] [SEVERE ] updating countdown to 41000
+[11:48:26.878] [SEVERE ] updating countdown to 40000
+[11:48:27.880] [SEVERE ] updating countdown to 39000
+[11:48:28.878] [SEVERE ] updating countdown to 38000
+[11:48:29.879] [SEVERE ] updating countdown to 37000
+[11:48:30.717] [SEVERE ] key 65 was pressed by player 1
+[11:48:30.718] [SEVERE ] player 1 placing token on slot 4
+[11:48:30.718] [SEVERE ] setting player 1 freeze to 0
+[11:48:30.879] [SEVERE ] updating countdown to 36000
+[11:48:30.881] [SEVERE ] setting player 1 freeze to 3000
+[11:48:31.879] [SEVERE ] setting player 1 freeze to 2000
+[11:48:31.879] [SEVERE ] updating countdown to 35000
+[11:48:32.878] [SEVERE ] setting player 1 freeze to 1000
+[11:48:32.879] [SEVERE ] updating countdown to 34000
+[11:48:33.878] [SEVERE ] setting player 1 freeze to 0
+[11:48:33.878] [SEVERE ] updating countdown to 33000
+[11:48:34.879] [SEVERE ] setting player 1 freeze to -1000
+[11:48:34.879] [SEVERE ] updating countdown to 32000
+[11:48:35.878] [SEVERE ] updating countdown to 31000
+[11:48:36.880] [SEVERE ] updating countdown to 30000
+[11:48:37.879] [SEVERE ] updating countdown to 29000
+[11:48:38.879] [SEVERE ] updating countdown to 28000
+[11:48:39.878] [SEVERE ] updating countdown to 27000
+[11:48:40.879] [SEVERE ] updating countdown to 26000
+[11:48:41.878] [SEVERE ] updating countdown to 25000
+[11:48:42.879] [SEVERE ] updating countdown to 24000
+[11:48:43.878] [SEVERE ] updating countdown to 23000
+[11:48:44.879] [SEVERE ] updating countdown to 22000
+[11:48:45.879] [SEVERE ] updating countdown to 21000
+[11:48:46.878] [SEVERE ] updating countdown to 20000
+[11:48:47.879] [SEVERE ] updating countdown to 19000
+[11:48:48.878] [SEVERE ] updating countdown to 18000
+[11:48:49.878] [SEVERE ] updating countdown to 17000
+[11:48:50.879] [SEVERE ] updating countdown to 16000
+[11:48:51.167] [SEVERE ] key 67 was pressed by player 1
+[11:48:51.168] [SEVERE ] removing player 1 token from slot 10
+[11:48:51.878] [SEVERE ] updating countdown to 15000
+[11:48:52.688] [SEVERE ] key 86 was pressed by player 1
+[11:48:52.688] [SEVERE ] player 1 placing token on slot 11
+[11:48:52.689] [SEVERE ] setting player 1 freeze to 3000
+[11:48:52.878] [SEVERE ] updating countdown to 14000
+[11:48:52.980] [SEVERE ] removing tokens from slot 8
+[11:48:52.981] [SEVERE ] removing card from slot 8
+[11:48:53.084] [INFO   ] thread dealer terminated.
+[11:48:58.086] [SEVERE ] thanks for playing... it was fun!
+[11:48:58.086] [INFO   ] thread main terminated.
+[11:48:58.086] [SEVERE ] disposing of user interface elements

@@ -97,11 +97,12 @@ public class Player implements Runnable {
                     } catch (InterruptedException ignored) {}
                 }
             }
+            freezeLeft=1;
             dealer.addCheck(this.id);
             synchronized (this) {
                 try {//dealer checking and we wait
                     notifyAll();
-                    while(freezeLeft ==-1)
+                    while(freezeLeft ==1)
                         wait();
                 } catch (InterruptedException ignored) {}
             }
@@ -164,8 +165,11 @@ public class Player implements Runnable {
                 }
             }
             if (tokens.remainingCapacity() > 0) {
+                if(tokens.remainingCapacity() == 1)
+                    freezeLeft=1;
                 tokens.add(slot);
                 table.placeToken(id, slot);
+
                 synchronized (this) {
                     notifyAll();
                 }
@@ -180,14 +184,11 @@ public class Player implements Runnable {
      * @post - the player's score is updated in the ui.
      */
     public void point() {
-        score++;
-        env.ui.setScore(this.id,score);
         milsToWait=env.config.pointFreezeMillis;
         freezeLeft =milsToWait;
         int ignored = table.countCards(); // this part is just for demonstration in the unit tests
         env.ui.setScore(id, ++score);
     }
-
     /**
      * Penalize a player and perform other related actions.
      */

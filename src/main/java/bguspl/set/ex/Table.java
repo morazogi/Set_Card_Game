@@ -113,7 +113,6 @@ public class Table {
      */
     public void placeToken(int player, int slot) {
         env.ui.placeToken(player,slot);
-        // +++ TODO implement
     }
 
     /**
@@ -125,7 +124,5 @@ public class Table {
     public boolean removeToken(int player, int slot) {
         env.ui.removeToken(player,slot);
         return true;
-        // +++ TODO implement
-
     }
 }
