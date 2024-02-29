@@ -130,18 +130,15 @@ public class Dealer implements Runnable {
             Queue<Integer> checkCards = new LinkedList<>();
             List<Integer> checkSlots = new LinkedList<>();
             int size=tokens.size();
-            for (int t=0 ; t<size;t++) {
-                    int token = tokens.remove();
+            for (Integer token : tokens) {
                     int card = table.slotToCard[token];
                     checkSlots.add(token);
                     tokens.add(token);
                     checkCards.add(card);
             }
             if (isSet(checkCards)) {//check for set
-                List<Integer> RemovedCards = new ArrayList<>();
                 while (!checkCards.isEmpty()) {
                     int card = checkCards.remove();
-                    RemovedCards.add(card);
                     table.removeCard(table.cardToSlot[card]);
                 }
                 p.resetTokens();
