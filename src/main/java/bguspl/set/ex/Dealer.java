@@ -47,7 +47,6 @@ public class Dealer implements Runnable {
     private boolean ClockChanged=true;
 
     private final long sec =1000;
-
     private BlockingQueue<Integer> toCheck ;
     public Dealer(Env env, Table table, Player[] players) {
         this.env = env;
@@ -71,16 +70,16 @@ public class Dealer implements Runnable {
         while (!shouldFinish()) {
             placeCardsOnTable(new LinkedList<>(default12));
             timerLoop();
-//            if (shouldFinish())
-//                break;
             removeAllCardsFromTable();
         }
         announceWinners();
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
     }
 
-    public void addCheck(int PlayerId){
-        toCheck.add(PlayerId);
+    public void addCheck(int PlayerId,int size){
+        if(!toCheck.contains(PlayerId))
+        toCheck.offer(PlayerId);
+        System.out.println(size);
     }
 
     private synchronized void StartingPlayersThreads(){
@@ -206,8 +205,8 @@ public class Dealer implements Runnable {
 
         for(Player p:players){
             if(p.milsToWait >0 && System.currentTimeMillis()>=p.nextFreezeTimeUpdate) {
-                p.nextFreezeTimeUpdate +=sec;
-                p.milsToWait -= updateTime;
+                p.nextFreezeTimeUpdate +=updateTime;
+                p.milsToWait =p.milsToWait-updateTime;
                 env.ui.setFreeze(p.id, p.milsToWait);
                 if(p.milsToWait==0)
                     p.playerThread.interrupt();
@@ -239,13 +238,17 @@ public class Dealer implements Runnable {
             for (int i = 0; i < env.config.columns * env.config.rows; i++)
                 random.add(i);
             Collections.shuffle(random);
-            players[0].resetTokens();
-            players[1].resetTokens();
             for (int i = 0; i <= 11; i++) {
                 deck.add(table.slotToCard[random.get(0)]);
                 table.removeCard(random.remove(0));
             }
             updateTimerDisplay(true);
+            toCheck.clear();
+            players[0].resetTokens();
+            players[1].resetTokens();
+            synchronized (this) {
+                notifyAll();
+            }
         }
     }
 

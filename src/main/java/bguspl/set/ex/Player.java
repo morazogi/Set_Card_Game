@@ -51,11 +51,13 @@ public class Player implements Runnable {
     /**
      * The current score of the player.
      */
+    private Thread AIThread;
     private int score=0;
     private BlockingQueue<Integer> tokens = new ArrayBlockingQueue<>(3);
     private Dealer dealer;
     public long milsToWait=0;
     public long nextFreezeTimeUpdate =0;
+    private BlockingQueue<Integer> actions = new ArrayBlockingQueue<>(3);
     /**
      * The class constructor.
      *
@@ -80,39 +82,58 @@ public class Player implements Runnable {
     public void run() {
         playerThread = Thread.currentThread();
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
-        if (!human) createArtificialIntelligence();
+        if (!human) {
+            createArtificialIntelligence();
+            }
         while (!terminate) {
-            synchronized (this) {
-                while (tokens.size() == 3) {//in case of penalty for not a set
-                    milsToWait=-1;
-                    try {
-                        wait();
-                    } catch (InterruptedException ignore) {}
+                if (tokens.size() == 3) {
+                    milsToWait = -1;
+
+                        while (tokens.size() == 3) {//loop that waits for 3 tokens
+                            try {
+                            synchronized (this) {
+                                if (!actions.isEmpty())
+                                    action(actions.remove());
+                                wait();
+                            }
+
+                        }catch (InterruptedException ignored) {}
+                    }
+                    if (!human)
+                        synchronized (this) {
+                            AIThread.interrupt();
+                        }
                 }
-            }
-            synchronized (this) {
-                while (tokens.size() < 3) {//loop that waits for 3 tokens
-                    milsToWait=-1;
-                    try {
-                        wait();
-                    } catch (InterruptedException ignored) {}
+            milsToWait=-1;
+            while (tokens.size() < 3) {//loop that waits for 3 tokens
+                try {
+                synchronized (this) {
+                    if (!actions.isEmpty())
+                        action(actions.remove());
+                    wait();
                 }
-            }
+
+            }catch (InterruptedException ignored) {}
+        }
             milsToWait=0;
-            dealer.addCheck(this.id);
-                try {//dealer checking and we wait
-                    synchronized (this) {
+            dealer.addCheck(this.id,tokens.size());
+            try {//dealer checking and we wait
+                synchronized (this) {
                     notifyAll();
                     while (milsToWait ==0)
                         wait();
                 }
-                    synchronized (this) {
-                        if (milsToWait > 0)
-                            Thread.sleep(milsToWait);
-                        while (true)
-                            wait();
-                    }
+                synchronized (this) {
+                    if (milsToWait > 0)
+                        Thread.sleep(milsToWait);
+                    while (true)
+                        wait();
+                }
                 } catch (InterruptedException ignored) {}
+            if(!human)
+                synchronized (this) {
+                    AIThread.interrupt();
+                }
         }
         if (!human) try { aiThread.join(); } catch (InterruptedException ignored) {}
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
@@ -128,16 +149,36 @@ public class Player implements Runnable {
         aiThread = new Thread(() -> {
             env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
             while (!terminate) {
-                while(tokens.size() <3) {
-                    int rnd = (int) (Math.random() * ((double) env.config.tableSize));
-                    this.keyPressed(rnd);
-                }
                 try {
-                    synchronized (this) { wait(); }
-                } catch (InterruptedException ignored) {}
+                    if(tokens.size() == 3) {
+                        while (tokens.size() == 3) {
+                            int rnd = (int) (Math.random() * ((double) env.config.tableSize));
+                            synchronized (this) {
+                                    this.keyPressed(rnd);
+                            }
+                        }
+                        synchronized (this) {
+                            wait();
+                        }
+                    }
+                }catch (InterruptedException ignored) {}
+                try {
+                    while (tokens.size() < 3) {
+                        int rnd = (int) (Math.random() * ((double) env.config.tableSize));
+                        synchronized (this) {
+                                this.keyPressed(rnd);
+                        }
+                    }
+                    synchronized (this) {
+                        while (true)
+                            wait();
+                    }
+                }catch (InterruptedException ignored) {}
             }
             env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
         }, "computer-" + id);
+        this.AIThread=aiThread;
+        playerThread.interrupt();
         aiThread.start();
     }
 
@@ -154,30 +195,35 @@ public class Player implements Runnable {
      * @param slot - the slot corresponding to the key pressed.
      */
     public void keyPressed(int slot) {
-        if (table.slotToCard[slot] != null) {
-            if (milsToWait == -1) {
-                for (int i = 0; i < tokens.size(); i++) {
-                    if (tokens.contains(slot)) {
-                        tokens.remove(slot);
-                        table.removeToken(id, slot);
-                        synchronized (this) {
-                            playerThread.interrupt();
-                        }
-                        return;
-                    }
+        if (table.slotToCard[slot] != null && milsToWait == -1) {
+                actions.offer(slot);
+                synchronized (this) {
+                    notifyAll();
                 }
-                if (tokens.remainingCapacity() > 0) {
-                    tokens.add(slot);
-                    table.placeToken(id, slot);
-
-                    synchronized (this) {
-                        playerThread.interrupt();
-                    }
-                }
-            }
         }
     }
 
+public void action(int slot){
+    if (table.slotToCard[slot] != null) {
+        for (int i = 0; i < tokens.size(); i++) {
+            if (tokens.contains(slot)) {
+                tokens.remove(slot);
+                table.removeToken(id, slot);
+                synchronized (this) {
+                    playerThread.interrupt();
+                }
+                return;
+            }
+        }
+        if (tokens.remainingCapacity() > 0) {
+            tokens.offer(slot);
+            table.placeToken(id, slot);
+            synchronized (this) {
+                playerThread.interrupt();
+            }
+        }
+    }
+}
 
     /**
 
@@ -194,7 +240,8 @@ public class Player implements Runnable {
      * Penalize a player and perform other related actions.
      */
     public void penalty() {
-        milsToWait=env.config.penaltyFreezeMillis;
+        //milsToWait=env.config.penaltyFreezeMillis;
+        milsToWait=1000;
     }
 
     public int score() {
@@ -203,6 +250,7 @@ public class Player implements Runnable {
 
     public Queue<Integer> cardsTokens(){return tokens;}
     public void resetTokens(){
+        actions.clear();
         while (!tokens.isEmpty()){
             int slot = tokens.remove();
             tokens.remove(slot);
