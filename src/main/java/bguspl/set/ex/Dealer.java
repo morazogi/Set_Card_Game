@@ -66,7 +66,6 @@ public class Dealer implements Runnable {
     public void run() {
         DealerThread = Thread.currentThread();
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
-        StartingPlayersThreads();
         while (!shouldFinish()) {
             placeCardsOnTable(new LinkedList<>(default12));
             timerLoop();
@@ -76,15 +75,15 @@ public class Dealer implements Runnable {
         env.logger.info("thread " + Thread.currentThread().getName() + " terminated.");
     }
 
-    public void addCheck(int PlayerId,int size){
+    public void addCheck(int PlayerId){
         if(!toCheck.contains(PlayerId))
         toCheck.offer(PlayerId);
-        System.out.println(size);
     }
 
     private synchronized void StartingPlayersThreads(){
         for(Player p:players){
             ThreadLogger PlayerThread = new ThreadLogger(p, "" +p.id, env.logger);
+            p.playerThread=PlayerThread;
             PlayerThread.startWithLog();
         }
     }
@@ -93,6 +92,15 @@ public class Dealer implements Runnable {
      * The inner loop of the dealer thread that runs as long as the countdown did not time out.
      */
     private void timerLoop() {
+        if(players[0].playerThread!=null) {
+            synchronized (this) {
+                for(Player p:players)
+                    p.shuffle=false;
+                notifyAll();
+            }
+        }
+        else
+            StartingPlayersThreads();
         nextTimeClocker=System.currentTimeMillis();
         reshuffleTime=System.currentTimeMillis()+env.config.turnTimeoutMillis+sec;
         nextTimeClocker=System.currentTimeMillis()+sec;
@@ -244,11 +252,8 @@ public class Dealer implements Runnable {
             }
             updateTimerDisplay(true);
             toCheck.clear();
-            players[0].resetTokens();
-            players[1].resetTokens();
-            synchronized (this) {
-                notifyAll();
-            }
+            for(Player p:players)
+                p.ResetPlayer();
         }
     }
 

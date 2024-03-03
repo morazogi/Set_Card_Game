@@ -58,6 +58,7 @@ public class Player implements Runnable {
     public long milsToWait=0;
     public long nextFreezeTimeUpdate =0;
     private BlockingQueue<Integer> actions = new ArrayBlockingQueue<>(3);
+    public boolean shuffle=false;
     /**
      * The class constructor.
      *
@@ -80,16 +81,22 @@ public class Player implements Runnable {
      */
     @Override
     public void run() {
-        playerThread = Thread.currentThread();
         env.logger.info("thread " + Thread.currentThread().getName() + " starting.");
         if (!human) {
             createArtificialIntelligence();
             }
         while (!terminate) {
+            while(shuffle)
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 if (tokens.size() == 3) {
                     milsToWait = -1;
-
-                        while (tokens.size() == 3) {//loop that waits for 3 tokens
+                        while (tokens.size() == 3 && !shuffle) {//loop that waits for 3 tokens
                             try {
                             synchronized (this) {
                                 if (!actions.isEmpty())
@@ -105,7 +112,7 @@ public class Player implements Runnable {
                         }
                 }
             milsToWait=-1;
-            while (tokens.size() < 3) {//loop that waits for 3 tokens
+            while (tokens.size() < 3 && !shuffle) {//loop that waits for 3 tokens
                 try {
                 synchronized (this) {
                     if (!actions.isEmpty())
@@ -116,17 +123,17 @@ public class Player implements Runnable {
             }catch (InterruptedException ignored) {}
         }
             milsToWait=0;
-            dealer.addCheck(this.id,tokens.size());
+            dealer.addCheck(this.id);
             try {//dealer checking and we wait
                 synchronized (this) {
                     notifyAll();
-                    while (milsToWait ==0)
+                    while (milsToWait ==0 && !shuffle)
                         wait();
                 }
                 synchronized (this) {
                     if (milsToWait > 0)
                         Thread.sleep(milsToWait);
-                    while (true)
+                    while (!shuffle)
                         wait();
                 }
                 } catch (InterruptedException ignored) {}
@@ -249,12 +256,17 @@ public void action(int slot){
     }
 
     public Queue<Integer> cardsTokens(){return tokens;}
-    public void resetTokens(){
+    public void resetTokens() {
         actions.clear();
-        while (!tokens.isEmpty()){
+        while (!tokens.isEmpty()) {
             int slot = tokens.remove();
             tokens.remove(slot);
             table.removeToken(id, slot);
+            milsToWait = 0;
         }
     }
+        public void ResetPlayer(){
+            resetTokens();
+            shuffle=true;
+        }
 }
