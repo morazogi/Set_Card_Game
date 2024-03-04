@@ -249,8 +249,7 @@ public void action(int slot){
      * Penalize a player and perform other related actions.
      */
     public void penalty() {
-//        milsToWait=env.config.penaltyFreezeMillis;
-        milsToWait=1000;
+        milsToWait=env.config.penaltyFreezeMillis;
     }
 
     public int score() {

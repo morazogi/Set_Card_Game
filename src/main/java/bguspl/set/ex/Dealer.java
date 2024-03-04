@@ -77,7 +77,7 @@ public class Dealer implements Runnable {
 
     public void addCheck(int PlayerId){
         if(!toCheck.contains(PlayerId))
-        toCheck.offer(PlayerId);
+            toCheck.offer(PlayerId);
     }
 
     public void unCheck(int id){
@@ -188,14 +188,18 @@ public class Dealer implements Runnable {
      * Check if any cards can be removed from the deck and placed on the table.
      */
     private void placeCardsOnTable(List<Integer> toFill) {
-//        Collections.shuffle(toFill);
-//        Collections.shuffle(deck);
+        Collections.shuffle(toFill);
+        Collections.shuffle(deck);
         if (!deck.isEmpty()){
+            int sizeD = deck.size();
             int size = toFill.size();
             int i;
-            for (i = 0; i < size; i++) {
+            for (i = 0; i < Math.min(size,sizeD); i++) {
             table.placeCard(deck.remove(0), toFill.remove(0));
             }
+        }
+        for (int i = 0; i < players.length; i++) {
+            env.ui.setFreeze(i,0);
         }
     }
 
@@ -279,8 +283,13 @@ public class Dealer implements Runnable {
                 random.add(i);
             Collections.shuffle(random);
             for (int i = 0; i <= 11; i++) {
-                deck.add(table.slotToCard[random.get(0)]);
-                table.removeCard(random.remove(0));
+                if(table.slotToCard[random.get(0)] != null)
+                {
+                    deck.add(table.slotToCard[random.get(0)]);
+                    table.removeCard(random.remove(0));
+                }
+                else
+                    random.remove(0);
             }
             updateTimerDisplay(true);
             toCheck.clear();

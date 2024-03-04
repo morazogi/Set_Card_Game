@@ -39,12 +39,12 @@ public class Config {
     /**
      * The number of human players in the game.
      */
-    public final int humanPlayers=2;
+    public final int humanPlayers;
 
     /**
      * The number of computer players (i.e. input is simulated)
      */
-    public final int computerPlayers=0;
+    public final int computerPlayers;
 
     /**
      * The total number of players (human + computer) in the game
@@ -199,8 +199,8 @@ public class Config {
         deckSize = (int) Math.pow(featureSize, featureCount);
 
         // gameplay settings
-       // humanPlayers = Integer.parseInt(properties.getProperty("HumanPlayers", "2"));
-       // computerPlayers = Integer.parseInt(properties.getProperty("ComputerPlayers", "0"));
+        humanPlayers = Integer.parseInt(properties.getProperty("HumanPlayers", "2"));
+        computerPlayers = Integer.parseInt(properties.getProperty("ComputerPlayers", "0"));
         players = humanPlayers + computerPlayers;
 
         hints = Boolean.parseBoolean(properties.getProperty("Hints", "False"));
