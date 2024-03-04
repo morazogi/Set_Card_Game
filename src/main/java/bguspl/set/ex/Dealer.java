@@ -80,6 +80,10 @@ public class Dealer implements Runnable {
         toCheck.offer(PlayerId);
     }
 
+    public void unCheck(int id){
+            toCheck.remove(id);
+    }
+
     private synchronized void StartingPlayersThreads(){
         for(Player p:players){
             ThreadLogger PlayerThread = new ThreadLogger(p, "" +p.id, env.logger);
@@ -93,10 +97,11 @@ public class Dealer implements Runnable {
      */
     private void timerLoop() {
         if(players[0].playerThread!=null) {
-            synchronized (this) {
-                for(Player p:players)
-                    p.shuffle=false;
-                notifyAll();
+                for(Player p:players) {
+                    synchronized (p) {
+                    p.shuffle = false;
+                    p.notifyAll();
+                }
             }
         }
         else
@@ -104,7 +109,8 @@ public class Dealer implements Runnable {
         nextTimeClocker=System.currentTimeMillis();
         reshuffleTime=System.currentTimeMillis()+env.config.turnTimeoutMillis+sec;
         nextTimeClocker=System.currentTimeMillis()+sec;
-        while (!shouldFinish() && System.currentTimeMillis() < reshuffleTime) {
+
+        while (!shouldFinish()&& System.currentTimeMillis() < reshuffleTime) {
             sleepUntilWokenOrTimeout();
             updateTimerDisplay(false);
             removeCardsFromTable();
@@ -153,6 +159,9 @@ public class Dealer implements Runnable {
                     int card = checkCards.remove();
                     table.removeCard(table.cardToSlot[card]);
                 }
+                for(Player player:players)
+                    if(player.id!=p.id)
+                        player.resetSpecificTokens(p.cardsTokens());
                 p.resetTokens();
                 placeCardsOnTable(checkSlots);
                 updateTimerDisplay(true);
@@ -161,19 +170,26 @@ public class Dealer implements Runnable {
             else
                 p.penalty();
             env.ui.setFreeze(p.id, p.milsToWait);
-            p.nextFreezeTimeUpdate =System.currentTimeMillis();
-            synchronized (this) {
-                notifyAll();
+            long updateTime;
+            if(clock <= env.config.turnTimeoutWarningMillis)
+                updateTime=sec/100;//10 mili sec if warning
+            else
+                updateTime = sec;
+            p.nextFreezeTimeUpdate =System.currentTimeMillis()+updateTime;
+            synchronized (p) {
+                p.notifyAll();
             }
         }
     }
+
+
 
     /**
      * Check if any cards can be removed from the deck and placed on the table.
      */
     private void placeCardsOnTable(List<Integer> toFill) {
-        Collections.shuffle(toFill);
-        Collections.shuffle(deck);
+//        Collections.shuffle(toFill);
+//        Collections.shuffle(deck);
         if (!deck.isEmpty()){
             int size = toFill.size();
             int i;
@@ -193,7 +209,11 @@ public class Dealer implements Runnable {
         ClockChanged=false;
         long toUpdateTime= nextTimeClocker - System.currentTimeMillis();
         synchronized (this) {
-            if(toUpdateTime>0 && toCheck.isEmpty()) {
+            boolean isFreezed=false;
+            for(Player p:players)
+                if(p.milsToWait>0)
+                    isFreezed=true;
+            if(toUpdateTime>0 && toCheck.isEmpty() && !isFreezed) {
                 try {
                     wait(toUpdateTime);
                 } catch (InterruptedException ignore) {}
@@ -213,9 +233,15 @@ public class Dealer implements Runnable {
 
         for(Player p:players){
             if(p.milsToWait >0 && System.currentTimeMillis()>=p.nextFreezeTimeUpdate) {
+                int x;
+                if(p.milsToWait==1010)
+                    x=500;
                 p.nextFreezeTimeUpdate +=updateTime;
-                p.milsToWait =p.milsToWait-updateTime;
-                env.ui.setFreeze(p.id, p.milsToWait);
+                p.milsToWait -=updateTime;
+                if(updateTime==10)
+                    env.ui.setFreeze(p.id, p.milsToWait+990);
+                else
+                    env.ui.setFreeze(p.id, p.milsToWait);
                 if(p.milsToWait==0)
                     p.playerThread.interrupt();
             }
@@ -242,6 +268,12 @@ public class Dealer implements Runnable {
      */
     private void removeAllCardsFromTable() {  // for reshuffle
         if (!shouldFinish()) {
+            for(Player p:players) {
+                p.ResetPlayer();
+                synchronized (p) {
+                    p.notifyAll();
+                }
+            }
             List<Integer> random = new LinkedList<>();
             for (int i = 0; i < env.config.columns * env.config.rows; i++)
                 random.add(i);
@@ -252,8 +284,6 @@ public class Dealer implements Runnable {
             }
             updateTimerDisplay(true);
             toCheck.clear();
-            for(Player p:players)
-                p.ResetPlayer();
         }
     }
 
@@ -262,19 +292,26 @@ public class Dealer implements Runnable {
      */
     private void announceWinners() {
         int [] arr;
-        if (players[0].score()>players[1].score())          //player 1 win
-        {
-            arr = new int[1];
-            arr[0] = 0;
+        int maxPoints = 0;
+        int winnersNum = 0;
+        List<Integer> winners = new LinkedList<>();
+        for (int i = 0; i < players.length; i++) {
+            if (players[i].score() > maxPoints){
+                winnersNum=1;
+                winners = new LinkedList<>();
+                winners.add(i);
+                maxPoints = players[i].score();
+            }
+            else if (players[i].score() == maxPoints){
+                winnersNum++;
+                winners.add(i);
+            }
         }
-        else if (players[0].score()<players[1].score()) {   // player 2 win
-            arr = new int[1];
-            arr[0] = 1;
-        }
-        else {                                              //it's a tie
-            arr = new int[2];
-            arr[0] = 0;
-            arr[1] = 1;
+        arr = new int[winnersNum];
+        int i = 0;
+        for (Integer x :winners){
+            arr[i] = x;
+            i++;
         }
         env.ui.announceWinner(arr);
     }

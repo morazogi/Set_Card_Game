@@ -90,9 +90,7 @@ public class Player implements Runnable {
                 synchronized (this) {
                     try {
                         wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    } catch (InterruptedException e) {}
                 }
                 if (tokens.size() == 3) {
                     milsToWait = -1;
@@ -122,21 +120,25 @@ public class Player implements Runnable {
 
             }catch (InterruptedException ignored) {}
         }
-            milsToWait=0;
-            dealer.addCheck(this.id);
-            try {//dealer checking and we wait
-                synchronized (this) {
-                    notifyAll();
-                    while (milsToWait ==0 && !shuffle)
-                        wait();
-                }
-                synchronized (this) {
-                    if (milsToWait > 0)
-                        Thread.sleep(milsToWait);
-                    while (!shuffle)
-                        wait();
-                }
+            if(!shuffle) {
+                milsToWait = 0;
+                dealer.addCheck(this.id);
+                try {//dealer checking and we wait
+                    synchronized (dealer) {
+                        dealer.notifyAll();
+                    }
+                        while (milsToWait == 0 && !shuffle)
+                            synchronized (this) {
+                            wait();
+                    }
+                    synchronized (this) {
+                        if (milsToWait > 0)
+                            wait(milsToWait);
+                        while (!shuffle)
+                            wait();
+                    }
                 } catch (InterruptedException ignored) {}
+            }
             if(!human)
                 synchronized (this) {
                     AIThread.interrupt();
@@ -247,7 +249,7 @@ public void action(int slot){
      * Penalize a player and perform other related actions.
      */
     public void penalty() {
-        //milsToWait=env.config.penaltyFreezeMillis;
+//        milsToWait=env.config.penaltyFreezeMillis;
         milsToWait=1000;
     }
 
@@ -262,11 +264,22 @@ public void action(int slot){
             int slot = tokens.remove();
             tokens.remove(slot);
             table.removeToken(id, slot);
-            milsToWait = 0;
+        }
+        milsToWait = 0;
+    }
+    public void resetSpecificTokens(Queue<Integer> RemovedSlots) {
+        for(int slot:tokens) {
+            if(RemovedSlots.contains(slot)) {
+                tokens.remove(slot);
+                table.removeToken(id, slot);
+                dealer.unCheck(this.id);
+            }
         }
     }
+
         public void ResetPlayer(){
             resetTokens();
             shuffle=true;
+
         }
 }

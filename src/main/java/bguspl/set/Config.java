@@ -39,12 +39,12 @@ public class Config {
     /**
      * The number of human players in the game.
      */
-    public final int humanPlayers=0;
+    public final int humanPlayers=2;
 
     /**
      * The number of computer players (i.e. input is simulated)
      */
-    public final int computerPlayers=2;
+    public final int computerPlayers=0;
 
     /**
      * The total number of players (human + computer) in the game
